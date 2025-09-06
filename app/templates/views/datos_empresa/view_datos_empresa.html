@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Datos Empresa</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="img/logo-contaplus-favicon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+
+  <link rel="stylesheet" href="view_datos_empresa.css">
+</head>
+<body>
+  
+<!-- HEADER -->
+  <header class="header">
+    <!-- Botón hamburguesa a la izquierda -->
+    <button id="toggleSidebar" class="btn btn-light btn-toggle">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Contenedor a Icono perfil -->
+    <div class="header-right">
+        <div class="profile-icon" id="profileIcon"></div>
+        <div class="dropdown-menu" id="dropdownMenu">
+          <span class="user-name" id="userName"></span>
+          <button id="logoutBtn">Cerrar sesión</button>
+        </div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+<div id="sidebar" class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-title">
+      <img src="img/logo-crop.png" alt="Logo Contaplus" class="logo-sidebar">
+      <h5>CONTAPLUS</h5>
+    </div>
+    <button id="closeSidebar" class="custom-close">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+  <div class="accordion" id="sidebarAccordion">
+    <!-- Sección 1 -->
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+          <i class="bi bi-building icon"></i> Empresa
+        </button>
+      </h2>
+      <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+        <div class="accordion-body">
+          <a href="../datos_empresa/view_datos_empresa.html" class="d-block">Datos Empresa</a>
+        </div>
+      </div>
+    </div>
+    <!-- Sección 2 -->
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+          <i class="bi bi-people icon"></i> Trabajadores
+        </button>
+      </h2>
+      <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+        <div class="accordion-body">
+          <a href="../trabajadores/view_trabajadores.html" class="d-block">Ver Trabajadores</a>
+          <a href="#" class="d-block">Nuevo Trabajador</a>
+          <a href="../Cargo/plantilla_cargo.html" class="d-block">Cargos</a>
+        </div>
+      </div>
+    </div>
+    <!-- Sección 3 -->
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+          <i class="bi bi-journal-check icon"></i> Contratos
+        </button>
+      </h2>
+      <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+        <div class="accordion-body">
+          <a href="#" class="d-block">Ver Contratos</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="content">
+    
+      <div class="container py-4">
+      <h2 class="mb-4">Datos Empresa</h2>
+      <form id="form-datos-empresa">
+
+      <!-- Sección 1: Datos Generales -->
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="razonSocial" class="form-label">Razón Social</label>
+          <input type="text" class="form-control" id="razonSocial" name="razonSocial" maxlength="60" required>
+          <small class="form-text text-muted">
+            Máximo 60 caracteres. <span id="contadorRazon">0</span>/60
+          </small>
+        </div>
+        <div class="col-md-6">
+          <label for="nombreFantasia" class="form-label">Nombre de Fantasía</label>
+          <input type="text" class="form-control" id="nombreFantasia" name="nombreFantasia" maxlength="45" required>
+          <small class="form-text text-muted">
+            Máximo 45 caracteres. <span id="contadorNombreFantasia">0</span>/45
+          </small>
+        </div>
+        <div class="col-md-6">
+          <label for="rutEmpresa" class="form-label">RUT Empresa</label>
+          <input type="number" class="form-control" id="rutEmpresa" name="rutEmpresa">
+        </div>
+        <div class="col-md-6">
+          <label for="direccion" class="form-label">Dirección</label>
+          <input type="text" class="form-control" id="direccion" name="direccion" required>
+        </div>
+        <div class="col-12 col-md-4">
+          <label for="region" class="form-label">Región</label>
+          <select class="form-select" id="region" name="region" required></select>
+        </div>
+        <div class="col-12 col-md-4">
+          <label for="comuna" class="form-label">Comuna</label>
+          <select class="form-select" id="comuna" name="comuna" required></select>
+        </div>
+        <div class="col-12 col-md-4">
+          <label for="provincia" class="form-label">Provincia</label>
+          <input type="text" class="form-control" id="provincia" name="provincia" readonly>
+        </div>
+        <div class="col-md-4">
+          <label for="tipoPropiedad" class="form-label">Tipo de Propiedad</label>
+          <select class="form-select" id="tipoPropiedad" name="tipoPropiedad" required>
+            <option selected disabled>Seleccione</option>
+            <option>Usufructo</option>
+            <option>Cedido</option>
+            <option>Arrendado</option>
+            <option>Propio</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="telefono" class="form-label">Teléfono</label>
+          <input type="number" class="form-control" id="telefono" name="telefono" required>
+        </div>
+        <div class="col-md-4">
+          <label for="correo" class="form-label" >Correo Electrónico</label>
+          <input type="email" class="form-control" id="correo" name="correo" required>
+        </div>
+      </div>
+
+      <!-- Sección 2: Datos Legales -->
+      <hr class="my-4">
+      <h2 class="mb-3">Datos Legales</h2>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="fechaConstitucion" class="form-label">Fecha de Constitución</label>
+          <input type="text" class="form-control" id="fechaConstitucion" name="fechaConstitucion" required>
+        </div>
+        <div class="col-md-6">
+          <label for="fechaInicio" class="form-label">Fecha de Inicio de Actividades</label>
+          <input type="text" class="form-control" id="fechaInicio" name="fechaInicio" required>
+        </div>
+        <div class="col-md-4">
+          <label for="nombresRepresentante" class="form-label">Nombres Representante Legal</label>
+          <input type="text" class="form-control" id="nombresRepresentante" name="nombresRepresentante" required>
+        </div>
+        <div class="col-md-4">
+          <label for="apellidoPaternoRepresentante" class="form-label">Apellido Paterno Representante Legal</label>
+          <input type="text" class="form-control" id="apellidoPaternoRepresentante" name="apellidoPaternoRepresentante" required>
+        </div>
+        <div class="col-md-4">
+          <label for="apellidoMaternoRepresentante" class="form-label">Apellido Materno Representante Legal</label>
+          <input type="text" class="form-control" id="apellidoMaternoRepresentante" name="apellidoMaternoRepresentante" required>
+        </div>
+        <div class="col-md-6">
+          <label for="rutRepresentante" class="form-label">RUT Representante Legal</label>
+          <input type="number" class="form-control" id="rutRepresentante" name="rutRepresentante" required>
+        </div>
+        <div class="col-md-6">
+          <label for="rutRepresentante" class="form-label">RUT Representante Legal</label>
+          <input type="number" class="form-control" id="rutRepresentante" name="rutRepresentante" required>
+        </div>
+        <div class="col-md-6">
+          <label for="generoRepresentante" class="form-label">Género del Representante Legal</label>
+          <select id="generoRepresentante" class="form-select" name="generoRepresentante" required></select>
+        </div>
+        <div class="col-md-6 d-none" id="campoGeneroOtro">
+          <label for="generoOtro" class="form-label">Especifique Género</label>
+          <input type="text" class="form-control" id="generoOtro" name="generoOtro" placeholder="Ingrese género">
+        </div>
+        <div class="col-md-6">
+          <label for="tipoSociedad" class="form-label">Tipo de Sociedad</label>
+          <select class="form-select" id="tipoSociedad" name="tipoSociedad" required></select>
+        </div>
+      </div>
+
+      <!-- Sección 3: Actividad Económica y Tributaria -->
+      <hr class="my-4">
+      <h2 class="mb-3">Actividad Económica y Tributaria</h2>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="giro" class="form-label">Giro</label>
+          <input type="text" class="form-control" id="giro" name="giro" required>
+        </div>
+        <div class="col-md-6">
+          <label for="regimenTributario" class="form-label">Régimen Tributario</label>
+          <select id="regimenTributario" name="regimenTributario" class="form-select" required></select>
+        </div>
+          <div class="col-12">
+          <label for="actividadEconomica" class="form-label">Actividad Económica (máx. 7)</label>
+          <select id="actividadEconomica" name="actividadEconomica" class="form-select" multiple required></select>
+        </div>
+
+      </div>
+
+      <!-- Sección 4: Seguridad y Previsión -->
+      <hr class="my-4">
+      <h2 class="mb-3">Seguridad y Previsión</h2  >
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="mutual" class="form-label">Mutual de Seguridad</label>
+          <select id="mutual" name="mutual" class="form-select" required></select>
+        </div>
+        <div class="col-md-6">
+          <label for="gratificacionLegal" class="form-label">Gratificación Legal</label>
+          <select id="gratificacionLegal" name="gratificacionLegal" class="form-select" required></select>
+        </div>
+        <div class="col-md-6">
+          <label for="tasaActividad" class="form-label">Tasa según actividad (%)</label>
+          <input type="number" step="0.01" class="form-control" id="tasaActividad" name="tasaActividad" min="0" max="100">
+        </div>
+      </div>
+
+      <!-- Sección 5: Direcciones de Trabajo -->
+      <hr class="my-4">
+      <h2 class="mb-3">Direcciones de Trabajo</h2>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="nombreObra" class="form-label">Nombre de la Obra</label>
+          <input type="text" class="form-control" id="nombreObra" name="nombreObra" maxlength="80" required>
+        </div>
+        <div class="col-md-6">
+          <label for="comunaObra" class="form-label">Comuna</label>
+          <input type="text" class="form-control" id="comunaObra" name="comunaObra" maxlength="80" required>
+        </div>
+        <div class="col-12">
+          <label for="descripcionObra" class="form-label">Descripción</label>
+          <textarea class="form-control" id="descripcionObra" name="descripcionObra" rows="3" required></textarea>
+        </div>
+      </div>
+
+      <!-- Sección 6: Acciones y Capital -->
+      <hr class="my-4">
+      <h2 class="mb-3">Acciones y Capital</h2>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="cantidadAcciones" class="form-label">Cantidad de Acciones Totales</label>
+          <input type="number" class="form-control" id="cantidadAcciones" name="cantidadAcciones" min="0">
+        </div>
+
+        <div class="col-md-6">
+          <label for="capitalTotal" class="form-label">Capital Total ($)</label>
+          <input type="number" class="form-control" id="capitalTotal" name="capitalTotal" min="0" step="100" required>
+        </div>
+
+        <div class="col-md-6">
+          <label for="capitalPagado" class="form-label">Capital Pagado ($)</label>
+          <input type="number" class="form-control" id="capitalPagado" name="capitalPagado" readonly>
+          
+        </div>
+
+        <div class="col-md-6">
+          <label for="capitalPorPagar" class="form-label">Capital por Pagar ($)</label>
+          <input type="number" class="form-control" id="capitalPorPagar" name="capitalPorPagar" readonly>
+        </div>
+
+        <div class="col-md-6">
+          <label for="fechaPagoGlobal" class="form-label">Fecha de Pago</label>
+          <input type="text" class="form-control" id="fechaPagoGlobal" name="fechaPagoGlobal" required>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label d-block">Socios</label>
+          <div id="contenedorSocios" class="mt-3"></div>
+          <button id="btnAgregarSocio" class="btn btn-primary btnAgregarSocio">+ Agregar Socio</button>
+          <small id="mensajeAccionesTotales" class="mt-2 d-block"></small>
+          <small id="mensajeParticipacionTotal" class="mt-2 d-block"></small>
+          </div>
+        </div>
+
+        <!-- Sección 7: Usuarios -->
+        <hr class="my-4">
+        <h2 class="mb-3">Usuarios Autorizados</h2>
+
+        <div class="row">
+          <div class="col-12">
+            <div class="row g-3">
+
+              <!-- Usuario 1 -->
+              <div class="col-12">
+                <h6 class="fw-bold border-bottom pb-2">Usuario 1</h6>
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label class="form-label">Nombres</label>
+                    <input type="text" class="form-control" name="usuarioNombres[]" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Primer Apellido</label>
+                    <input type="text" class="form-control" name="usuarioPrimerApellido[]" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Segundo Apellido</label>
+                    <input type="text" class="form-control" name="usuarioSegundoApellido[]">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">RUT</label>
+                    <input type="number" class="form-control" name="usuarioRUT[]" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Correo Electrónico</label>
+                    <input type="email" class="form-control" name="usuarioCorreo[]" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Contraseña</label>
+                    <div class="input-group">
+                      <input type="password" class="form-control inputPassword" name="usuarioClave[]" required>
+                      <button type="button" class="btn btn-outline-secondary togglePassword">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Rol</label>
+                    <select class="form-select rolUsuario" name="usuarioRol[]" required></select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Usuario 2 -->
+              <div class="col-12 mt-4">
+                <h6 class="fw-bold border-bottom pb-2">Usuario 2</h6>
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label class="form-label">Nombres</label>
+                    <input type="text" class="form-control" name="usuarioNombres[]" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Primer Apellido</label>
+                    <input type="text" class="form-control" name="usuarioPrimerApellido[]" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Segundo Apellido</label>
+                    <input type="text" class="form-control" name="usuarioSegundoApellido[]">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">RUT</label>
+                    <input type="number" class="form-control" name="usuarioRUT[]" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Correo Electrónico</label>
+                    <input type="email" class="form-control" name="usuarioCorreo[]" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Contraseña</label>
+                    <div class="input-group">
+                      <input type="password" class="form-control inputPassword" name="usuarioClave[]" required>
+                      <button type="button" class="btn btn-outline-secondary togglePassword">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Rol</label>
+                    <select class="form-select rolUsuario" name="usuarioRol[]" required></select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Usuario 3 -->
+              <div class="col-12 mt-4">
+                <h6 class="fw-bold border-bottom pb-2">Usuario 3</h6>
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label class="form-label">Nombres</label>
+                    <input type="text" class="form-control" name="usuarioNombres[]" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Primer Apellido</label>
+                    <input type="text" class="form-control" name="usuarioPrimerApellido[]" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Segundo Apellido</label>
+                    <input type="text" class="form-control" name="usuarioSegundoApellido[]">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">RUT</label>
+                    <input type="number" class="form-control" name="usuarioRUT[]" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Correo Electrónico</label>
+                    <input type="email" class="form-control" name="usuarioCorreo[]" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Contraseña</label>
+                    <div class="input-group">
+                      <input type="password" class="form-control inputPassword" name="usuarioClave[]" required>
+                      <button type="button" class="btn btn-outline-secondary togglePassword">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Rol</label>
+                    <select class="form-select rolUsuario" name="usuarioRol[]" required></select>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 8: Datos Históricos -->
+        <hr class="my-4">
+        <h2 class="seccion-titulo">Datos Históricos</h2>
+
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Subir Archivos Históricos</label>
+            <input type="file" class="form-control" id="inputArchivoHistorico" accept=".pdf,.doc,.docx,.xlsx,.xls,.png,.jpg,.jpeg">
+          </div>
+
+          <div class="col-12">
+            <ul class="list-group" id="listaArchivosHistoricos"></ul>
+          </div>
+        </div>
+
+
+
+
+
+
+
+      </div>
+
+      
+      
+      <!-- Botón -->
+      <div class="mt-4 d-flex justify-content-end">
+        <button type="submit" class="btn btn-primario">Guardar / Actualizar</button>
+      </div>
+
+    </form>
+  </div>
+
+
+  </div>
+
+  <!-- PLantilla Socios -->
+  <template id="plantillaSocio">
+    <div class="socio-item border rounded p-3 mb-3 position-relative">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <button type="button" class="btn btn-sm btn-outline-secondary btnToggleSocio me-2">
+          <i class="bi bi-chevron-down"></i>
+        </button>
+        
+        <div class="resumen-socio text-center flex-grow-1" style="display: none;"></div>
+        
+        <button type="button" class="btn-close btnEliminarSocio ms-2" aria-label="Eliminar"></button>
+      </div>
+
+      <div class="row g-2">
+        <div class="col-md-6">
+          <label class="form-label">Nombre del Socio</label>
+          <input type="text" class="form-control" name="nombreSocio[]" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">RUT del Socio</label>
+          <input type="text" class="form-control" name="rutSocio[]" required>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Participación (%)</label>
+          <input type="number" class="form-control" name="participacionSocio[]" min="0" max="100" step="0.01" placeholder="% de participación" required>
+          <div class="invalid-feedback"></div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Fecha de Incorporación</label>
+          <input type="text" class="form-control fechaSocio" name="fechaIncorporacionSocio[]">
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Cantidad de Acciones</label>
+          <input type="number" class="form-control" name="accionesSocio[]" min="0">
+          <div class="invalid-feedback"></div>
+        </div>
+
+        <div class="col-12">
+          <div class="metodos-pago-container"></div>
+
+          <button type="button" class="btn btn-outline-secondary btn-sm mt-2 btnAgregarPago">
+            + Añadir medio de pago
+          </button>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Capital Total Pagado ($)</label>
+          <input type="number" class="form-control capitalPagadoSocio" name="capitalPagadoSocio[]" min="0" readonly>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Capital por Pagar ($)</label>
+          <input type="number" class="form-control" name="capitalPorPagarSocio[]" min="0" readonly>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Fecha de Pago</label>
+          <input type="text" class="form-control fechaPagoSocio" name="fechaPagoSocio[]">
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Capital Total ($)</label>
+          <input type="number" class="form-control" name="capitalTotalSocio[]" min="0" readonly>
+        </div>
+      </div>
+    </div>
+  </template>
+
+
+<!-- Template método de pago socio -->
+<template id="templateMetodoPago">
+  <div class="row align-items-start border p-2 mb-2 metodo-pago-item">
+    <div class="col-md-3">
+      <label class="form-label">Método de Pago</label>
+      <select class="form-select tipoPagoIndividual">
+        <option value="dinero">Dinero</option>
+        <option value="otros">Otros</option>
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <label class="form-label">Acciones</label>
+      <input type="number" class="form-control accionesPorMetodo" min="1">
+      <div class="invalid-feedback"></div>
+    </div>
+
+    <div class="col-md-2">
+      <label class="form-label">Pagado ($)</label>
+      <input type="number" class="form-control capitalPorMetodo" min="0">
+      <div class="invalid-feedback"></div>
+    </div>
+
+    <div class="col-md-2">
+      <label class="form-label">Deuda ($)</label>
+      <input type="number" class="form-control deudaPorMetodo" readonly>
+    </div>
+
+    <div class="col-auto d-flex align-items-end justify-content-center pt-4">
+      <button type="button" class="btn btn-danger btnEliminarPago" title="Eliminar método de pago">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="col-12 campoOtroMetodo d-none mt-2">
+      <label class="form-label">Especificar otro</label>
+      <input type="text" class="form-control">
+    </div>
+  </div>
+</template>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="datos_variables_empresa.js"></script>
+  <script src="view_datos_empresa.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+
+</body>
+</html>

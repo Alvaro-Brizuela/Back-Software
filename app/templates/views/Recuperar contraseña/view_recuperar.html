@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recuperar Contraseña</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="img/logo-contaplus-favicon.png">
+  <link rel="stylesheet" href="view_recuperar.css"> <!-- Usa el mismo CSS que el login -->
+</head>
+<body>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div class="content d-flex justify-content-center align-items-center login-bg position-relative">
+  <!-- Logo con opacidad -->
+  <div class="login-bg-logo"></div>
+
+  <!-- Card de recuperación -->
+  <div class="card p-4 shadow-lg position-relative" style="max-width: 450px; width: 100%; border-radius: 1rem; z-index: 1;">
+    <div class="text-center mb-4">
+      <h2 class="fw-bold" style="color: var(--color-primario);">Recuperar Contraseña</h2>
+      <p class="text-muted mb-0">Ingresa tu correo y crea una nueva contraseña</p>
+    </div>
+
+    <form id="recuperarForm">
+      <div class="mb-3">
+        <label class="form-label">Correo Electrónico</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+          <input type="email" class="form-control" required>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Nueva Contraseña</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-lock"></i></span>
+          <input type="password" class="form-control" id="nuevaPassword" required>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Confirmar Nueva Contraseña</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+          <input type="password" class="form-control" id="confirmarPassword" required>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Actualizar Contraseña</button>
+    </form>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="view_recuperar.js"></script>
+</body>
+</html>

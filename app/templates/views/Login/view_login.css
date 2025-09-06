@@ -1,0 +1,193 @@
+/* -------------------------------------------------
+   CONFIGURACIÓN GLOBAL
+-------------------------------------------------- */
+
+:root {
+
+    /* Colores */
+    --color-primario: #003b5c;
+    --color-secundario: #2493ff;
+    --color-fondo: #f8f9fa;
+    --color-blanco: #ffffff;
+    --color-negro: #000000;
+
+    /* Fuentes */
+    --font-principal: 'Inter', sans-serif;
+}
+
+.btn-primary {
+  background-color: #003b5c !important; /* Cambia este valor por tu color primario */
+  border-color: #003b5c !important;
+}
+
+body {
+
+    margin: 0;
+    font-family: var(--font-principal);
+    background-color: var(--color-fondo);
+    color: var(--color-negro);
+}
+
+
+/* -------------------------------------------------
+   PÁGINA PRINCIPAL (views / content)
+-------------------------------------------------- */
+
+.content {
+  padding: 2rem;
+  padding-top: 80px;
+}
+
+.login-bg-logo {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  width: 300px;
+  height: 300px;
+  background: url('img/logo-crop.png') no-repeat center center;
+  background-size: contain;
+  opacity: 0.08;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.card {
+  z-index: 2;
+  position: relative;
+  overflow: hidden;
+  min-height: 460px; /* ajustable */
+}
+
+.login-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  min-width: 100vw;
+  background: linear-gradient(
+    154deg,
+    #1d1d1f 0%,
+    #1d1d1f 50%,
+    #003b5c 50%,
+    #003b5c 100%
+  );
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Responsividad del logo de fondo */
+@media (max-width: 768px) {
+  .login-bg-logo {
+    width: 400px;
+    height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-bg-logo {
+    width: 280px;
+    height: 280px;
+  }
+}
+
+/* -------------------------------------------------
+   LOGIN / REGISTRO - ESTILOS ADICIONALES
+-------------------------------------------------- */
+
+.form-wrapper {
+  transition: height 0.3s ease;
+  position: relative;
+  width: 100%;
+}
+
+.form-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+}
+
+.form-section.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  position: relative;
+}
+
+.nav-tabs {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.nav-tabs .nav-link {
+  color: var(--color-negro);
+  border: none;
+  background: none;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--color-primario);
+  border-bottom: 2px solid var(--color-secundario);
+}
+
+.input-group-text {
+  background-color: #f1f3f5;
+  border: 1px solid #ced4da;
+  color: var(--color-primario);
+}
+
+.input-group .form-control {
+  border-left: none;
+}
+
+.input-group .form-control:focus {
+  box-shadow: none;
+  border-color: var(--color-secundario);
+}
+
+/* Enlace "¿Olvidaste tu contraseña?" igual al botón */
+a.link-primary {
+  color: var(--color-primario);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+a.link-primary:hover {
+  color: var(--color-secundario);
+  text-decoration: underline;
+}
+
+/* Forzar color del enlace de recuperación */
+form#loginForm a[href*="recuperar_cuenta"] {
+  color: var(--color-primario);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+form#loginForm a[href*="recuperar_cuenta"]:hover {
+  color: var(--color-secundario);
+  text-decoration: underline;
+}
+
+.recuperar-link {
+  color: var(--color-primario);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.recuperar-link:hover {
+  color: var(--color-secundario);
+  text-decoration: underline;
+}
