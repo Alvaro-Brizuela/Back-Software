@@ -43,9 +43,10 @@ btnRegisterTab.addEventListener('click', () => {
 });
 
 // Validación del formulario de registro
-registerForm.addEventListener('submit', function (e) {
+registerForm.addEventListener('submit', async function (e) {
   e.preventDefault();
 
+  const email = document.getElementById('emailRegister')?.value;
   const pass = document.getElementById('passwordRegister')?.value;
   const confirm = document.getElementById('confirmPassword')?.value;
 
@@ -54,9 +55,39 @@ registerForm.addEventListener('submit', function (e) {
     return;
   }
 
-  // Aquí deberías enviar los datos al backend si es necesario
-  alert('Cuenta creada correctamente (simulado)');
+  try {
+    const response = await fetch("http://127.0.0.1:8000/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: email,
+        password: pass
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      alert("Error: " + (errorData.detail || "No se pudo procesar la solicitud"));
+      return;
+    }
+
+    const data = await response.json();
+    console.log("Respuesta del backend:", data);
+
+    // ✅ Guardar token en localStorage si quieres manejarlo en JS
+    localStorage.setItem("access_token", data.access_token);
+
+    // ✅ Redirigir a la vista de empresa
+    window.location.href = "/empresa";
+
+  } catch (error) {
+    console.error("Error al conectar con el servidor:", error);
+    alert("No se pudo conectar con el backend");
+  }
 });
+
 
 // Al cargar la página, ajusta la altura al formulario activo
 window.addEventListener('DOMContentLoaded', adjustFormHeight);
