@@ -30,7 +30,7 @@ Backend del sistema ERP desarrollado en **FastAPI** con **PostgreSQL** como base
 
 ### 🛠️ Uso con Makefile
 
-# El proyecto incluye un Makefile para facilitar tareas comunes:
+# El proyecto incluye un Makefile para facilitar tareas comunes(linux):
    .PHONY: run db-init models dev
 
    include .env
@@ -64,6 +64,12 @@ Backend del sistema ERP desarrollado en **FastAPI** con **PostgreSQL** como base
 4. Modo desarrollo (todo en uno)
    ```bash
    make dev
+
+1. **Levantar servidor(windows)**
+   ```bash
+   poetry run uvicorn app.main:app --reload --port 8000
+   poetry run python -c "from app.database import Base, engine; Base.metadata.create_all(bind=engine)"
+
 
 ### Base de datos
 
