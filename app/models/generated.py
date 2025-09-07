@@ -161,6 +161,7 @@ class Empresa(Base):
     empresa_tipo: Mapped['EmpresaTipo'] = relationship('EmpresaTipo', uselist=False, back_populates='empresa')
     usuario: Mapped[List['Usuario']] = relationship('Usuario', uselist=True, back_populates='empresa')
     trabajador: Mapped[List['Trabajador']] = relationship('Trabajador', uselist=True, back_populates='empresa')
+    epp: Mapped[List['Epp']] = relationship('Epp', uselist=True, back_populates='empresa')
 
 
 class ArchivoEmpresa(Base):
@@ -452,6 +453,23 @@ class Licencia(Base):
     fecha_final = mapped_column(DateTime(True))
 
     trabajador: Mapped[Optional['Trabajador']] = relationship('Trabajador', back_populates='licencia')
+
+
+class Epp(Base):
+    __tablename__ = 'epp'
+    __table_args__ = (
+        ForeignKeyConstraint(['id_empresa'], ['empresa.id_empresa'], name='fk_epp_empresa'),
+        PrimaryKeyConstraint('id_epp', name='epp_pkey'),
+        UniqueConstraint('epp', name='epp_nombre_unique'),
+        UniqueConstraint('descripcion', name='epp_descripcion_unique')
+    )
+
+    id_epp = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1))
+    id_empresa = mapped_column(Integer, nullable=False)
+    epp = mapped_column(String(100), nullable=False)
+    descripcion = mapped_column(String(250), nullable=False)
+
+    empresa: Mapped['Empresa'] = relationship('Empresa', back_populates='epp')
 
 
 class Sesiones(Base):
