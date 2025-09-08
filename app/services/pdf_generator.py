@@ -109,6 +109,7 @@ class PDFEppGenerator:
         
         # Título principal
         story.append(Paragraph("REGISTRO DE ENTREGA", self.title_style))
+        story.append(Paragraph("ELEMENTOS DE PROTECCIÓN PERSONAL", self.title_style))
         
         # Encabezado
         story.extend(self._create_header(data))
