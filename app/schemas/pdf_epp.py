@@ -7,9 +7,11 @@ class EppDeliveryItem(BaseModel):
 
 
 class PDFEppRequest(BaseModel):
-    rut: str
     nombre: str
+    rut: str
     cargo: str
+    empresa_nombre: str
+    empresa_rut: str
     elementos: List[EppDeliveryItem]
 
 

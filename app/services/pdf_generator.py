@@ -94,8 +94,9 @@ class PDFEppGenerator:
             
             # Textos de firma - empresa
             canvas.setFont("Helvetica-Bold", 10)
-            canvas.drawCentredString(190, footer_y, "EJEMPLO EMPRESA")
-            canvas.drawCentredString(190, footer_y - 12, "EMPRESA")
+            canvas.drawCentredString(190, footer_y, data.empresa_nombre)
+            canvas.drawCentredString(190, footer_y - 12, f"RUT: {data.empresa_rut}")
+            canvas.drawCentredString(190, footer_y - 24, "EMPLEADOR")
             
             # Textos de firma - trabajador  
             canvas.drawCentredString(410, footer_y, data.nombre)
@@ -107,7 +108,7 @@ class PDFEppGenerator:
         story = []
         
         # Título principal
-        story.append(Paragraph("ELEMENTOS DE PROTECCIÓN PERSONAL", self.title_style))
+        story.append(Paragraph("REGISTRO DE ENTREGA", self.title_style))
         
         # Encabezado
         story.extend(self._create_header(data))
@@ -131,8 +132,8 @@ class PDFEppGenerator:
         elements = []
         fecha_actual = datetime.now().strftime("%d de %B de %Y")
         
-        elements.append(Paragraph(f"<b>RUT:</b> {data.rut}", self.header_style))
         elements.append(Paragraph(f"<b>NOMBRE:</b> {data.nombre}", self.header_style))
+        elements.append(Paragraph(f"<b>RUT:</b> {data.rut}", self.header_style))
         elements.append(Paragraph(f"<b>CARGO:</b> {data.cargo}", self.header_style))
         elements.append(Paragraph(f"<b>FECHA:</b> {fecha_actual}", self.header_style))
         elements.append(Spacer(1, 15))
