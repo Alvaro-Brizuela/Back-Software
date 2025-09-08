@@ -1,10 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+import os
 
 from app.database import get_db
 from app.models.generated import Epp, Empresa
 from app.schemas.epp import EppCreate, EppResponse
+from app.schemas.pdf_epp import PDFEppRequest, PDFEppResponse
+from app.services.pdf_generator import PDFEppGenerator
 
 router = APIRouter(prefix="/epp", tags=["EPP"])
 
@@ -54,3 +58,33 @@ def create_epp(epp_data: EppCreate, db: Session = Depends(get_db)):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Error interno del servidor"
             )
+
+
+@router.post("/generate-pdf")
+def generate_epp_pdf(pdf_data: PDFEppRequest):
+    try:
+        # Crear instancia del generador de PDF
+        pdf_generator = PDFEppGenerator()
+        
+        # Generar el PDF
+        pdf_path = pdf_generator.generate_pdf(pdf_data)
+        
+        # Verificar que el archivo se creó correctamente
+        if not os.path.exists(pdf_path):
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error al generar el PDF"
+            )
+        
+        # Devolver el archivo PDF como respuesta
+        return FileResponse(
+            path=pdf_path,
+            media_type='application/pdf',
+            filename=f"entrega_epp_{pdf_data.rut}.pdf"
+        )
+    
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al generar el PDF: {str(e)}"
+        )
