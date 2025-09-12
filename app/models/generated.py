@@ -471,6 +471,19 @@ class Epp(Base):
 
     empresa: Mapped['Empresa'] = relationship('Empresa', back_populates='epp')
 
+class Odi(Base):
+    __tablename__ = 'odi'
+    __table_args__ = (
+        PrimaryKeyConstraint('id_odi', name='odi_pkey'),
+        UniqueConstraint('tarea', name='odi_tarea_unique'),
+    )
+
+    id_odi = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1))
+    tarea = mapped_column(String(200), nullable=False)
+    riesgo = mapped_column(String(200), nullable=False)
+    consecuencias = mapped_column(String(600), nullable=False)
+    precaucion = mapped_column(String(600), nullable=False)
+
 
 class Sesiones(Base):
     __tablename__ = 'sesiones'
