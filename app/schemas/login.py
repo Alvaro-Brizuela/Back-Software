@@ -1,6 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
-
 # ------------------------------
 # Request
 # ------------------------------
@@ -25,7 +24,6 @@ class LoginRequest(BaseModel):
             raise ValueError("La contraseña debe tener al menos un número")
         return v
 
-
 # ------------------------------
 # Response
 # ------------------------------
@@ -40,5 +38,5 @@ class LoginResponse(BaseModel):
         ...,
         ge=1,
         le=3,
-        description="Rol del usuario en la empresa (1=Admin, 2=Supervisor, 3=Usuario)"
+        description="Rol del usuario en la empresa (1=Admin, 2=Contador, 3=rrhh)"
     )
