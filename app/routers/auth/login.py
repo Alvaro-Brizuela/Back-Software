@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
+from hashlib import sha256
 from datetime import timedelta, datetime, timezone
 import secrets
 from jose import jwt, JWTError
@@ -42,7 +43,7 @@ def login_user(data: LoginRequest, request: Request, db: Session = Depends(get_d
     refresh_token = secrets.token_urlsafe(64)
     sesion = Sesiones(
         idusuario=login_entry.id_login,
-        tokenrefresh_hash=refresh_token,
+        tokenrefresh_hash=sha256(refresh_token.encode()).hexdigest(),
         fecha_sesion=datetime.now(timezone.utc),
         limite_sesion=datetime.now(timezone.utc) + timedelta(days=auth.REFRESH_TOKEN_EXPIRE_DAYS),
         revoked_at=None,

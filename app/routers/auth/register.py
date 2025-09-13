@@ -68,7 +68,7 @@ def register_user(data: Register, db: Session = Depends(get_db)):
     email_verificacion_hash=verification_token,
     email_verificacion_expira=expiry_time
     )
-    db.add(login_entry)
+    db.add_all([nueva_empresa, nuevo_usuario, login_entry])
     db.commit()
     db.refresh(login_entry)
 
