@@ -1,32 +1,26 @@
-[project]
+[tool.poetry]
 name = "back-end-contaplus"
 version = "0.1.0"
 description = "Controladores de sistema erp desarrollado para Contaplus"
-authors = [
-    {name = "Alvaro",email = "alvarobrizuela01@gmail.com"}
-]
+authors = ["Alvaro <alvarobrizuela01@gmail.com>"]
 readme = "README.md"
-requires-python = ">=3.12, <4.0"
-dependencies = [
-    "fastapi (>=0.116.1,<0.117.0)",
-    "uvicorn[standard] (>=0.35.0,<0.36.0)",
-    "sqlalchemy (>=2.0.43,<3.0.0)",
-    "psycopg2-binary (>=2.9.10,<3.0.0)",
-    "pydantic[email] (>=2.11.7,<3.0.0)",
-    "python-dotenv (>=1.1.1,<2.0.0)",
-    "passlib[bcrypt] (>=1.7.4,<2.0.0)",
-    "sendgrid (>=6.12.4,<7.0.0)",
-    "python-jose[cryptography] (>=3.5.0,<4.0.0)",
-    "jinja2 (>=3.1.6,<4.0.0)",
-    "python-multipart (>=0.0.20,<0.0.21)",
-    "reportlab (>=4.0.0,<5.0.0)",
-    "asyncpg (>=0.30.0,<0.31.0)"
-]
+packages = [{ include = "app" }]
 
-
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.poetry.dependencies]
+python = ">=3.12,<4.0"
+fastapi = ">=0.116.1,<0.117.0"
+uvicorn = { extras = ["standard"], version = ">=0.35.0,<0.36.0" }
+sqlalchemy = ">=2.0.43,<3.0.0"
+psycopg2-binary = ">=2.9.10,<3.0.0"
+pydantic = { extras = ["email"], version = ">=2.11.7,<3.0.0" }
+python-dotenv = ">=1.1.1,<2.0.0"
+passlib = { extras = ["bcrypt"], version = ">=1.7.4,<2.0.0" }
+sendgrid = ">=6.12.4,<7.0.0"
+python-jose = { extras = ["cryptography"], version = ">=3.5.0,<4.0.0" }
+jinja2 = ">=3.1.6,<4.0.0"
+python-multipart = ">=0.0.20,<0.0.21"
+reportlab = ">=4.0.0,<5.0.0"
+asyncpg = ">=0.30.0,<0.31.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.1"
@@ -37,3 +31,6 @@ mypy = "^1.17.1"
 alembic = "^1.16.5"
 sqlacodegen-v2 = "^0.1.4"
 
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
