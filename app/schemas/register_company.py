@@ -4,7 +4,7 @@ from datetime import date
 from app.services.rut_validation import validar_rut_chileno
 
 # ------------------------------
-# Subschemas con validaciones
+# Subschemas con validaciones (para Update)
 # ------------------------------
 
 class DireccionEmpresa(BaseModel):
@@ -76,6 +76,7 @@ class UsuarioAutorizado(BaseModel):
         if not any(c.isdigit() for c in v):
             raise ValueError("La contraseña debe tener al menos un número")
         return v
+
     @field_validator("rut")
     @classmethod
     def validar_rut(cls, v):
@@ -85,8 +86,9 @@ class UsuarioAutorizado(BaseModel):
             raise ValueError("RUT inválido")
         return v
 
+
 # ------------------------------
-# Schema principal Empresa
+# Schema principal Empresa → Update
 # ------------------------------
 
 class EmpresaUpdateRequest(BaseModel):
@@ -104,7 +106,6 @@ class EmpresaUpdateRequest(BaseModel):
     direcciones_trabajo: Optional[List[DireccionTrabajo]]
     acciones_capital: Optional[AccionesCapital]
     usuarios_autorizados: Optional[List[UsuarioAutorizado]]
-
     archivos_historicos: Optional[List[str]] = Field(default=None, description="Rutas o IDs de archivos históricos")
 
     @field_validator("rut_empresa")
@@ -117,10 +118,92 @@ class EmpresaUpdateRequest(BaseModel):
         return v
 
 
+# ------------------------------
+# Subschemas de lectura (para Full Response)
+# ------------------------------
 
+class UsuarioRead(BaseModel):
+    id_usuario: int
+    nombre: str
+    correo: EmailStr
 
-class EmpresaRead(EmpresaUpdateRequest):
+    class Config:
+        orm_mode = True
+
+class EmpresaSocioRead(BaseModel):
     id: int
+    nombre: str
+    porcentaje: float
+
+    class Config:
+        orm_mode = True
+
+class EmpresaParametrosRead(BaseModel):
+    id: int
+    parametro1: str
+    parametro2: str
+
+    class Config:
+        orm_mode = True
+
+class EmpresaRepresentanteRead(BaseModel):
+    id: int
+    nombre: str
+    rut: str
+
+    class Config:
+        orm_mode = True
+
+class EmpresaSeguridadRead(BaseModel):
+    id: int
+    mutual: str
+    tasa: float
+
+    class Config:
+        orm_mode = True
+
+class EmpresaTipoRead(BaseModel):
+    id: int
+    tipo: str
+
+    class Config:
+        orm_mode = True
+
+class TerritorialRead(BaseModel):
+    id_territorial: int
+    region: str
+    comuna: str
+
+    class Config:
+        orm_mode = True
+
+
+# ------------------------------
+# Empresa Full Response (para GET)
+# ------------------------------
+
+class EmpresaFullResponse(BaseModel):
+    id_empresa: int
+    rut_empresa: Optional[int]
+    DV_rut: Optional[str]
+    nombre_real: str
+    nombre_fantasia: Optional[str]
+    razon_social: str
+    giro: Optional[str]
+    fecha_constitucion: Optional[date]
+    fecha_inicio_actividades: Optional[date]
+    estado_suscripcion: int
+    direccion_fisica: Optional[str]
+    telefono: Optional[str]
+    correo: Optional[str]
+
+    territorial: Optional[TerritorialRead]
+    empresa_socio: List[EmpresaSocioRead] = []
+    empresa_parametros: Optional[EmpresaParametrosRead]
+    empresa_representante: List[EmpresaRepresentanteRead] = []
+    empresa_seguridad: Optional[EmpresaSeguridadRead]
+    empresa_tipo: Optional[EmpresaTipoRead]
+    usuario: List[UsuarioRead] = []
 
     class Config:
         orm_mode = True
