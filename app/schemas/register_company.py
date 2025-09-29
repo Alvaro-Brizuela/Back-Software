@@ -97,7 +97,7 @@ class EmpresaUpdateRequest(BaseModel):
     rut_empresa: Optional[str] = Field(None, min_length=9, max_length=12, description="RUT de la empresa en formato válido")
     direccion: Optional[DireccionEmpresa]
     tipo_propiedad: Optional[str] = Field(None, description="Tipo de propiedad de la empresa")
-    telefono: Optional[str] = Field(None, regex=r"^\+?\d{8,15}$", description="Teléfono de contacto")
+    telefono: Optional[str] = Field(None, pattern=r"^\+?\d{8,15}$", description="Teléfono de contacto")
     correo_electronico: Optional[EmailStr]
 
     datos_legales: Optional[DatosLegales]
