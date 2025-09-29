@@ -1,7 +1,7 @@
 from typing import Optional, List
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from datetime import date
-
+from app.services.rut_validation import validar_rut_chileno
 
 # ------------------------------
 # Subschemas con validaciones
@@ -76,32 +76,50 @@ class UsuarioAutorizado(BaseModel):
         if not any(c.isdigit() for c in v):
             raise ValueError("La contraseña debe tener al menos un número")
         return v
-
+    @field_validator("rut")
+    @classmethod
+    def validar_rut(cls, v):
+        if v is None:
+            return v
+        if not validar_rut_chileno(v):
+            raise ValueError("RUT inválido")
+        return v
 
 # ------------------------------
 # Schema principal Empresa
 # ------------------------------
 
-class EmpresaCreate(BaseModel):
-    razon_social: str = Field(..., min_length=2, max_length=60, description="Razón social de la empresa")
+class EmpresaUpdateRequest(BaseModel):
+    razon_social: Optional[str] = Field(None, min_length=2, max_length=60, description="Razón social de la empresa")
     nombre_fantasia: Optional[str] = Field(None, max_length=45, description="Nombre de fantasía")
-    rut_empresa: str = Field(..., min_length=9, max_length=12, description="RUT de la empresa en formato válido")
-    direccion: DireccionEmpresa
-    tipo_propiedad: str = Field(..., description="Tipo de propiedad de la empresa")
+    rut_empresa: Optional[str] = Field(None, min_length=9, max_length=12, description="RUT de la empresa en formato válido")
+    direccion: Optional[DireccionEmpresa]
+    tipo_propiedad: Optional[str] = Field(None, description="Tipo de propiedad de la empresa")
     telefono: Optional[str] = Field(None, regex=r"^\+?\d{8,15}$", description="Teléfono de contacto")
-    correo_electronico: EmailStr
+    correo_electronico: Optional[EmailStr]
 
-    datos_legales: DatosLegales
+    datos_legales: Optional[DatosLegales]
     actividad_economica: Optional[ActividadEconomicaTributaria]
     seguridad_prevision: Optional[SeguridadPrevision]
     direcciones_trabajo: Optional[List[DireccionTrabajo]]
     acciones_capital: Optional[AccionesCapital]
-    usuarios_autorizados: List[UsuarioAutorizado]
+    usuarios_autorizados: Optional[List[UsuarioAutorizado]]
 
     archivos_historicos: Optional[List[str]] = Field(default=None, description="Rutas o IDs de archivos históricos")
 
+    @field_validator("rut_empresa")
+    @classmethod
+    def validar_rut_empresa(cls, v):
+        if v is None:
+            return v
+        if not validar_rut_chileno(v):
+            raise ValueError("RUT de empresa inválido")
+        return v
 
-class EmpresaRead(EmpresaCreate):
+
+
+
+class EmpresaRead(EmpresaUpdateRequest):
     id: int
 
     class Config:
