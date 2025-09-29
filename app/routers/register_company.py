@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload
 from app.database import get_db
 from app.models.generated import Empresa
-from app.schemas.register_company import EmpresaUpdateRequest, EmpresaRead
+from app.schemas.register_company import EmpresaUpdateRequest, EmpresaFullResponse
+from app.services.dependencies import get_current_user
 router = APIRouter(prefix="/empresa", tags=["empresa"])
 
 @router.put("/{empresa_id}")
@@ -29,3 +31,28 @@ def actualizar_empresa(empresa_id: int, data: EmpresaUpdateRequest, db: Session 
         "msg": "Datos de empresa actualizados correctamente",
         "empresa_id": empresa.id_empresa
     }
+
+
+@router.get("/full", response_model=EmpresaFullResponse)
+def obtener_empresa(
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user)   # 👈 empresa_id viene del token
+    ):
+    empresa = (
+        db.query(Empresa)
+        .options(
+            joinedload(Empresa.territorial),
+            joinedload(Empresa.empresa_socio),
+            joinedload(Empresa.empresa_parametros),
+            joinedload(Empresa.empresa_representante),
+            joinedload(Empresa.empresa_seguridad),
+            joinedload(Empresa.empresa_tipo),
+            joinedload(Empresa.usuario)
+
+        )
+        .filter(Empresa.id_empresa == user["empresa_id"])
+        .first()
+    )
+    if not empresa:
+        raise HTTPException(status_code=404, detail="Empresa no encontrada")
+    return empresa
