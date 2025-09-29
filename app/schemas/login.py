@@ -38,5 +38,7 @@ class LoginResponse(BaseModel):
         ...,
         ge=1,
         le=3,
-        description="Rol del usuario en la empresa (1=Admin, 2=Contador, 3=rrhh)"
+        description="Rol del usuario en la empresa (1=Admin, 2=Contador, 3=RRHH)"
     )
+    redirect_url: str = Field(..., description="URL de redirección según rol o estado de la cuenta")
+
