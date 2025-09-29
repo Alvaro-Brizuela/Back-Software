@@ -53,13 +53,22 @@ def login_user(data: LoginRequest, request: Request, db: Session = Depends(get_d
     db.add(sesion)
     db.commit()
 
+    role_map = {
+    1: {"nombre": "admin", "redirect": "../datos_empresa/view_datos_empresa.html"},
+    2: {"nombre": "contador", "redirect": "/dashboard/contabilidad"},
+    3: {"nombre": "rrhh", "redirect": "/dashboard/rrhh"}
+}
+    rol_info = role_map.get(login_entry.tipo_usuario, {"nombre": "desconocido", "redirect": "/empresa"})
+
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
         "token_type": "bearer",
         "usuario_id": login_entry.id_usuario,
         "empresa_id": empresa_id,
-        "rol": login_entry.tipo_usuario
+        "rol": login_entry.tipo_usuario,
+        "rol_nombre": rol_info["nombre"],
+        "redirect_url": rol_info["redirect"]
     }
 
 
