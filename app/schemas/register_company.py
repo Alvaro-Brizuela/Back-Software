@@ -8,67 +8,68 @@ from app.services.rut_validation import validar_rut_chileno
 # ------------------------------
 
 class DireccionEmpresa(BaseModel):
-    region: str = Field(..., min_length=2, max_length=50, description="Nombre de la región")
-    comuna: str = Field(..., min_length=2, max_length=50, description="Nombre de la comuna")
-    provincia: str = Field(..., min_length=2, max_length=50, description="Nombre de la provincia")
-    direccion: str = Field(..., min_length=5, max_length=100, description="Dirección detallada")
+    region: Optional[str] = Field(None, min_length=2, max_length=50, description="Nombre de la región")
+    comuna: Optional[str] = Field(None, min_length=2, max_length=50, description="Nombre de la comuna")
+    provincia: Optional[str] = Field(None, min_length=2, max_length=50, description="Nombre de la provincia")
+    direccion: Optional[str] = Field(None, min_length=5, max_length=100, description="Dirección detallada")
 
 
 class RepresentanteLegal(BaseModel):
-    nombre: str = Field(..., min_length=2, max_length=60, description="Nombre completo del representante")
-    rut: str = Field(..., min_length=9, max_length=12, description="RUT válido en formato XX.XXX.XXX-X")
+    nombre: Optional[str] = Field(None, min_length=2, max_length=60, description="Nombre completo del representante")
+    rut: Optional[str] = Field(None, min_length=9, max_length=12, description="RUT válido en formato XX.XXX.XXX-X")
     genero: Optional[str] = Field(None, description="Género del representante legal")
 
 
 class DatosLegales(BaseModel):
-    fecha_constitucion: date = Field(..., description="Fecha de constitución de la empresa")
-    fecha_inicio_actividades: date = Field(..., description="Fecha de inicio de actividades")
-    representante: RepresentanteLegal
-    tipo_sociedad: str = Field(..., min_length=3, max_length=50, description="Tipo de sociedad (SpA, Ltda, etc.)")
+    fecha_constitucion: Optional[date] = Field(None, description="Fecha de constitución de la empresa")
+    fecha_inicio_actividades: Optional[date] = Field(None, description="Fecha de inicio de actividades")
+    representante: Optional[RepresentanteLegal] = None
+    tipo_sociedad: Optional[str] = Field(None, min_length=3, max_length=50, description="Tipo de sociedad (SpA, Ltda, etc.)")
 
 
 class ActividadEconomicaTributaria(BaseModel):
-    giro: str = Field(..., min_length=3, max_length=100, description="Giro principal de la empresa")
-    regimen_tributario: str = Field(..., description="Régimen tributario aplicable")
+    giro: Optional[str] = Field(None, min_length=3, max_length=100, description="Giro principal de la empresa")
+    regimen_tributario: Optional[str] = Field(None, description="Régimen tributario aplicable")
     actividades: Optional[List[str]] = Field(default=None, max_items=7, description="Lista de actividades económicas")
 
 
 class SeguridadPrevision(BaseModel):
-    mutual_seguridad: str = Field(..., description="Mutual de seguridad asociada")
-    gratificacion_legal: str = Field(..., description="Tipo de gratificación legal")
-    tasa_actividad: float = Field(..., ge=0, le=100, description="Tasa según actividad (%)")
+    mutual_seguridad: Optional[str] = Field(None, description="Mutual de seguridad asociada")
+    gratificacion_legal: Optional[str] = Field(None, description="Tipo de gratificación legal")
+    tasa_actividad: Optional[float] = Field(None, ge=0, le=100, description="Tasa según actividad (%)")
 
 
 class DireccionTrabajo(BaseModel):
-    nombre_obra: str = Field(..., min_length=3, max_length=100, description="Nombre de la obra o faena")
-    comuna: str = Field(..., min_length=2, max_length=50, description="Comuna de la obra")
+    nombre_obra: Optional[str] = Field(None, min_length=3, max_length=100, description="Nombre de la obra o faena")
+    comuna: Optional[str] = Field(None, min_length=2, max_length=50, description="Comuna de la obra")
     descripcion: Optional[str] = Field(None, max_length=200, description="Descripción de la obra")
 
 
 class AccionesCapital(BaseModel):
-    cantidad_acciones: int = Field(..., gt=0, description="Cantidad total de acciones")
-    capital_total: float = Field(..., ge=0, description="Capital total ($)")
-    capital_pagado: float = Field(..., ge=0, description="Capital pagado ($)")
-    capital_por_pagar: float = Field(..., ge=0, description="Capital por pagar ($)")
-    fecha_pago: Optional[date]
+    cantidad_acciones: Optional[int] = Field(None, gt=0, description="Cantidad total de acciones")
+    capital_total: Optional[float] = Field(None, ge=0, description="Capital total ($)")
+    capital_pagado: Optional[float] = Field(None, ge=0, description="Capital pagado ($)")
+    capital_por_pagar: Optional[float] = Field(None, ge=0, description="Capital por pagar ($)")
+    fecha_pago: Optional[date] = None
     socios: Optional[List[str]] = Field(default=None, description="Lista de socios")
 
 
 class UsuarioAutorizado(BaseModel):
-    nombre: str = Field(..., min_length=2, max_length=50, description="Nombre del usuario autorizado")
-    rut: str = Field(..., min_length=9, max_length=12, description="RUT válido en formato XX.XXX.XXX-X")
-    correo: EmailStr = Field(..., description="Correo electrónico válido")
-    contrasena: str = Field(
-        ...,
+    nombre: Optional[str] = Field(None, min_length=2, max_length=50, description="Nombre del usuario autorizado")
+    rut: Optional[str] = Field(None, min_length=9, max_length=12, description="RUT válido en formato XX.XXX.XXX-X")
+    correo: Optional[EmailStr] = Field(None, description="Correo electrónico válido")
+    contrasena: Optional[str] = Field(
+        None,
         min_length=8,
         max_length=20,
         description="Contraseña (8-20 caracteres, debe tener mayúscula, minúscula y número)"
     )
-    rol: str = Field(..., description="Rol asignado (Administrador, Usuario, etc.)")
+    rol: Optional[str] = Field(None, description="Rol asignado (Administrador, Usuario, etc.)")
 
-    # Validar seguridad de contraseña
     @field_validator("contrasena")
     def validar_password(cls, v):
+        if v is None:
+            return v
         if not any(c.isupper() for c in v):
             raise ValueError("La contraseña debe tener al menos una mayúscula")
         if not any(c.islower() for c in v):
@@ -95,17 +96,17 @@ class EmpresaUpdateRequest(BaseModel):
     razon_social: Optional[str] = Field(None, min_length=2, max_length=60, description="Razón social de la empresa")
     nombre_fantasia: Optional[str] = Field(None, max_length=45, description="Nombre de fantasía")
     rut_empresa: Optional[str] = Field(None, min_length=9, max_length=12, description="RUT de la empresa en formato válido")
-    direccion: Optional[DireccionEmpresa]
+    direccion: Optional[DireccionEmpresa] = None
     tipo_propiedad: Optional[str] = Field(None, description="Tipo de propiedad de la empresa")
     telefono: Optional[str] = Field(None, pattern=r"^\+?\d{8,15}$", description="Teléfono de contacto")
-    correo_electronico: Optional[EmailStr]
+    correo_electronico: Optional[EmailStr] = None
 
-    datos_legales: Optional[DatosLegales]
-    actividad_economica: Optional[ActividadEconomicaTributaria]
-    seguridad_prevision: Optional[SeguridadPrevision]
-    direcciones_trabajo: Optional[List[DireccionTrabajo]]
-    acciones_capital: Optional[AccionesCapital]
-    usuarios_autorizados: Optional[List[UsuarioAutorizado]]
+    datos_legales: Optional[DatosLegales] = None
+    actividad_economica: Optional[ActividadEconomicaTributaria] = None
+    seguridad_prevision: Optional[SeguridadPrevision] = None
+    direcciones_trabajo: Optional[List[DireccionTrabajo]] = None
+    acciones_capital: Optional[AccionesCapital] = None
+    usuarios_autorizados: Optional[List[UsuarioAutorizado]] = None
     archivos_historicos: Optional[List[str]] = Field(default=None, description="Rutas o IDs de archivos históricos")
 
     @field_validator("rut_empresa")
@@ -123,56 +124,62 @@ class EmpresaUpdateRequest(BaseModel):
 # ------------------------------
 
 class UsuarioRead(BaseModel):
-    id_usuario: int
-    nombre: str
-    correo: EmailStr
+    id_usuario: Optional[int] = None
+    nombre: Optional[str] = None
+    correo: Optional[EmailStr] = None
 
     class Config:
         orm_mode = True
+
 
 class EmpresaSocioRead(BaseModel):
-    id: int
-    nombre: str
-    porcentaje: float
+    id: Optional[int] = None
+    nombre: Optional[str] = None
+    porcentaje: Optional[float] = None
 
     class Config:
         orm_mode = True
+
 
 class EmpresaParametrosRead(BaseModel):
-    id: int
-    parametro1: str
-    parametro2: str
+    id: Optional[int] = None
+    parametro1: Optional[str] = None
+    parametro2: Optional[str] = None
 
     class Config:
         orm_mode = True
+
 
 class EmpresaRepresentanteRead(BaseModel):
-    id: int
-    nombre: str
-    rut: str
+    id: Optional[int] = None
+    nombre: Optional[str] = None
+    rut: Optional[str] = None
 
     class Config:
         orm_mode = True
+
 
 class EmpresaSeguridadRead(BaseModel):
-    id: int
-    mutual: str
-    tasa: float
+    id: Optional[int] = None
+    mutual: Optional[str] = None
+    tasa: Optional[float] = None
 
     class Config:
         orm_mode = True
+
 
 class EmpresaTipoRead(BaseModel):
-    id: int
-    tipo: str
+    id: Optional[int] = None
+    tipo: Optional[str] = None
 
     class Config:
         orm_mode = True
 
+
 class TerritorialRead(BaseModel):
-    id_territorial: int
-    region: str
-    comuna: str
+    id_territorial: Optional[int] = None
+    region: Optional[str] = None
+    comuna: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -183,19 +190,19 @@ class TerritorialRead(BaseModel):
 # ------------------------------
 
 class EmpresaFullResponse(BaseModel):
-    id_empresa: int
-    rut_empresa: Optional[int]
-    DV_rut: Optional[str]
-    nombre_real: Optional[str]
-    nombre_fantasia: Optional[str]
-    razon_social: Optional[str]
-    giro: Optional[str]
-    fecha_constitucion: Optional[date]
-    fecha_inicio_actividades: Optional[date]
-    estado_suscripcion: int
-    direccion_fisica: Optional[str]
-    telefono: Optional[str]
-    correo: Optional[str]
+    id_empresa: Optional[int] = None
+    rut_empresa: Optional[int] = None
+    DV_rut: Optional[str] = None
+    nombre_real: Optional[str] = None
+    nombre_fantasia: Optional[str] = None
+    razon_social: Optional[str] = None
+    giro: Optional[str] = None
+    fecha_constitucion: Optional[date] = None
+    fecha_inicio_actividades: Optional[date] = None
+    estado_suscripcion: Optional[int] = None
+    direccion_fisica: Optional[str] = None
+    telefono: Optional[str] = None
+    correo: Optional[str] = None
 
     territorial: Optional[TerritorialRead] = None
     empresa_socio: Optional[List[EmpresaSocioRead]] = None
