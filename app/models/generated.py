@@ -55,20 +55,6 @@ class Nacionalidad(Base):
     nacionalidad = mapped_column(String(50))
 
 
-class Odi(Base):
-    __tablename__ = 'odi'
-    __table_args__ = (
-        PrimaryKeyConstraint('id_odi', name='odi_pkey'),
-        UniqueConstraint('tarea', name='odi_tarea_unique')
-    )
-
-    id_odi = mapped_column(BigInteger, Sequence('odi_odi_id_seq'))
-    tarea = mapped_column(String(200), nullable=False)
-    riesgo = mapped_column(String(200), nullable=False)
-    consecuencias = mapped_column(String(600), nullable=False)
-    precaucion = mapped_column(String(600), nullable=False)
-
-
 class RegimenTributario(Base):
     __tablename__ = 'regimen_tributario'
     __table_args__ = (
@@ -174,6 +160,7 @@ class Empresa(Base):
     empresa_socio: Mapped[List['EmpresaSocio']] = relationship('EmpresaSocio', uselist=True, back_populates='empresa')
     empresa_tipo: Mapped['EmpresaTipo'] = relationship('EmpresaTipo', uselist=False, back_populates='empresa')
     epp: Mapped[List['Epp']] = relationship('Epp', uselist=True, back_populates='empresa')
+    odi: Mapped[List['Odi']] = relationship('Odi', uselist=True, back_populates='empresa')
     usuario: Mapped[List['Usuario']] = relationship('Usuario', uselist=True, back_populates='empresa')
     trabajador: Mapped[List['Trabajador']] = relationship('Trabajador', uselist=True, back_populates='empresa')
 
@@ -325,6 +312,24 @@ class Epp(Base):
     empresa: Mapped['Empresa'] = relationship('Empresa', back_populates='epp')
 
 
+class Odi(Base):
+    __tablename__ = 'odi'
+    __table_args__ = (
+        ForeignKeyConstraint(['id_empresa'], ['empresa.id_empresa'], ondelete='CASCADE', name='fk_odi_empresa'),
+        PrimaryKeyConstraint('id_odi', name='odi_pkey'),
+        UniqueConstraint('tarea', name='odi_tarea_unique')
+    )
+
+    id_odi = mapped_column(BigInteger, Sequence('odi_odi_id_seq'))
+    tarea = mapped_column(String(200), nullable=False)
+    riesgo = mapped_column(String(200), nullable=False)
+    consecuencias = mapped_column(String(600), nullable=False)
+    precaucion = mapped_column(String(600), nullable=False)
+    id_empresa = mapped_column(Integer, nullable=False)
+
+    empresa: Mapped['Empresa'] = relationship('Empresa', back_populates='odi')
+
+
 class Usuario(Base):
     __tablename__ = 'usuario'
     __table_args__ = (
@@ -340,6 +345,8 @@ class Usuario(Base):
     apellido_paterno = mapped_column(String(50))
     apellido_materno = mapped_column(String(50))
     direccion_exacta = mapped_column(String(100))
+    rut = mapped_column(Integer)
+    rut_dv = mapped_column(String(2))
 
     empresa: Mapped[Optional['Empresa']] = relationship('Empresa', back_populates='usuario')
     territorial: Mapped[Optional['Territorial']] = relationship('Territorial', back_populates='usuario')

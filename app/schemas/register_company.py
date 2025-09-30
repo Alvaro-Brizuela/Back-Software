@@ -254,10 +254,10 @@ class UsuarioRead(BaseModel):
     nombre: Optional[str] = None
     apellido_paterno: Optional[str] = None
     apellido_materno: Optional[str] = None
-
+    rut: Optional[int] = None           
+    rut_dv: Optional[str] = None   
     territorial: Optional[TerritorialRead] = None
-    login_usuario: Optional[List[LoginUsuarioRead]] = None  # 👈 ahora lista
-
+    login_usuario: Optional[List[LoginUsuarioRead]] = None 
     class Config:
         from_attributes = True
 
