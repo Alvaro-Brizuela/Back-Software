@@ -231,8 +231,10 @@ class EmpresaTipoRead(BaseModel):
 
 
 class LoginUsuarioRead(BaseModel):
-    id: Optional[int] = None
-    username: Optional[str] = None
+    id_login: Optional[int] = None
+    correo: Optional[EmailStr] = None
+    telefono: Optional[str] = None
+    tipo_usuario: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -252,10 +254,9 @@ class UsuarioRead(BaseModel):
     nombre: Optional[str] = None
     apellido_paterno: Optional[str] = None
     apellido_materno: Optional[str] = None
-    correo: Optional[EmailStr] = None
 
     territorial: Optional[TerritorialRead] = None
-    login_usuario: Optional[LoginUsuarioRead] = None
+    login_usuario: Optional[List[LoginUsuarioRead]] = None  # 👈 ahora lista
 
     class Config:
         from_attributes = True
