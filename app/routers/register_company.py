@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import joinedload
 from app.database import get_db
-from app.models.generated import Empresa
+from app.models.generated import Empresa, EmpresaSocio, EmpresaSeguridad, EmpresaTipo, Usuario
 from app.schemas.register_company import EmpresaUpdateRequest, EmpresaFullResponse
 from app.services.dependencies import get_current_user
 router = APIRouter(prefix="/empresa", tags=["empresa"])
@@ -43,11 +43,19 @@ def obtener_empresa(
         .options(
             joinedload(Empresa.territorial),
             joinedload(Empresa.empresa_socio),
+            joinedload(Empresa.empresa_socio).joinedload(EmpresaSocio.pago_acciones),
             joinedload(Empresa.empresa_parametros),
             joinedload(Empresa.empresa_representante),
             joinedload(Empresa.empresa_seguridad),
+            joinedload(Empresa.empresa_seguridad).joinedload(EmpresaSeguridad.caja_compensaciones),
+            joinedload(Empresa.empresa_seguridad).joinedload(EmpresaSeguridad.mutual_seguridad),
             joinedload(Empresa.empresa_tipo),
-            joinedload(Empresa.usuario)
+            joinedload(Empresa.empresa_tipo).joinedload(EmpresaTipo.regimen_tributario),
+            joinedload(Empresa.empresa_tipo).joinedload(EmpresaTipo.tipo_actividad),
+            joinedload(Empresa.empresa_tipo).joinedload(EmpresaTipo.tipo_sociedad),
+            joinedload(Empresa.usuario),
+            joinedload(Empresa.usuario).joinedload(Usuario.territorial),
+            joinedload(Empresa.usuario).joinedload(Usuario.login_usuario),
 
         )
         .filter(Empresa.id_empresa == user["empresa_id"])
