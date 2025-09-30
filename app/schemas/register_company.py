@@ -186,9 +186,9 @@ class EmpresaFullResponse(BaseModel):
     id_empresa: int
     rut_empresa: Optional[int]
     DV_rut: Optional[str]
-    nombre_real: str
+    nombre_real: Optional[str]
     nombre_fantasia: Optional[str]
-    razon_social: str
+    razon_social: Optional[str]
     giro: Optional[str]
     fecha_constitucion: Optional[date]
     fecha_inicio_actividades: Optional[date]
@@ -197,13 +197,13 @@ class EmpresaFullResponse(BaseModel):
     telefono: Optional[str]
     correo: Optional[str]
 
-    territorial: Optional[TerritorialRead]
-    empresa_socio: List[EmpresaSocioRead] = []
-    empresa_parametros: Optional[EmpresaParametrosRead]
-    empresa_representante: List[EmpresaRepresentanteRead] = []
-    empresa_seguridad: Optional[EmpresaSeguridadRead]
-    empresa_tipo: Optional[EmpresaTipoRead]
-    usuario: List[UsuarioRead] = []
+    territorial: Optional[TerritorialRead] = None
+    empresa_socio: Optional[List[EmpresaSocioRead]] = None
+    empresa_parametros: Optional[EmpresaParametrosRead] = None
+    empresa_representante: Optional[List[EmpresaRepresentanteRead]] = None
+    empresa_seguridad: Optional[EmpresaSeguridadRead] = None
+    empresa_tipo: Optional[EmpresaTipoRead] = None
+    usuario: Optional[List[UsuarioRead]] = None
 
     class Config:
         orm_mode = True
