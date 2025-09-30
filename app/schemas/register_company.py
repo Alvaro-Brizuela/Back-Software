@@ -129,7 +129,7 @@ class UsuarioRead(BaseModel):
     correo: Optional[EmailStr] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class EmpresaSocioRead(BaseModel):
@@ -138,7 +138,7 @@ class EmpresaSocioRead(BaseModel):
     porcentaje: Optional[float] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class EmpresaParametrosRead(BaseModel):
@@ -147,7 +147,7 @@ class EmpresaParametrosRead(BaseModel):
     parametro2: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class EmpresaRepresentanteRead(BaseModel):
@@ -156,7 +156,7 @@ class EmpresaRepresentanteRead(BaseModel):
     rut: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class EmpresaSeguridadRead(BaseModel):
@@ -165,7 +165,7 @@ class EmpresaSeguridadRead(BaseModel):
     tasa: Optional[float] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class EmpresaTipoRead(BaseModel):
@@ -173,7 +173,7 @@ class EmpresaTipoRead(BaseModel):
     tipo: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class TerritorialRead(BaseModel):
@@ -182,7 +182,7 @@ class TerritorialRead(BaseModel):
     comuna: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # ------------------------------
@@ -213,4 +213,4 @@ class EmpresaFullResponse(BaseModel):
     usuario: Optional[List[UsuarioRead]] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
