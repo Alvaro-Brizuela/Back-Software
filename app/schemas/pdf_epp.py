@@ -1,12 +1,19 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
+from datetime import date
+
+
+class EppElemento(BaseModel):
+    id_epp: int
+    cantidad: Optional[int] = None
+    fecha_entrega: Optional[date] = None
 
 
 class PDFEppRequest(BaseModel):
     nombre: str
     rut: str
     cargo: str
-    elementos_ids: List[int]
+    elementos: List[EppElemento]
 
 
 class PDFEppResponse(BaseModel):
