@@ -155,11 +155,13 @@ class PDFEppGenerator:
     def _create_table(self, elementos: List) -> List:
         # Headers de la tabla
         data = [['N°', 'ELEMENTO DE PROTECCIÓN PERSONAL', 'CANTIDAD', 'FECHA DE ENTREGA']]
-        
+
         # Agregar elementos
         for i, elemento in enumerate(elementos, 1):
-            data.append([str(i), elemento.elemento_proteccion, '', ''])
-        
+            cantidad = str(elemento.cantidad) if elemento.cantidad is not None else ''
+            fecha = elemento.fecha_entrega.strftime('%d/%m/%Y') if elemento.fecha_entrega is not None else ''
+            data.append([str(i), elemento.elemento_proteccion, cantidad, fecha])
+
         # Crear la tabla
         table = Table(data, colWidths=[0.5*inch, 3.5*inch, 1*inch, 1.5*inch])
         

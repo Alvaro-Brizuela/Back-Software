@@ -2,6 +2,7 @@
 from .auth import register, verify_email ,login, refresh
 from . import epp, odi
 from . import register_company
+from . import workers
 
 routers = [
     #afps.router,
@@ -16,6 +17,11 @@ routers = [
     refresh.router,
     login.router,
     epp.router,
+<<<<<<< HEAD
     odi.router,
     register_company.router
+=======
+    register_company.router,
+    workers.router
+>>>>>>> dec1cbf01388fcecf82bf4ddcbfde2074526fd23
 ]

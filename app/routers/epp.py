@@ -155,22 +155,30 @@ def generate_epp_pdf(
                 detail="Empresa no encontrada"
             )
 
+        # Obtener IDs de los elementos
+        elementos_ids = [e.id_epp for e in pdf_data.elementos]
+
         # Obtener los elementos EPP por IDs
-        elementos = db.query(Epp).filter(
-            Epp.id_epp.in_(pdf_data.elementos_ids),
+        elementos_epp = db.query(Epp).filter(
+            Epp.id_epp.in_(elementos_ids),
             Epp.id_empresa == empresa_id
         ).all()
 
-        if len(elementos) != len(pdf_data.elementos_ids):
+        if len(elementos_epp) != len(elementos_ids):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Algunos elementos EPP no fueron encontrados o no pertenecen a tu empresa"
             )
 
+        # Crear diccionario para mapear id_epp a objeto Epp
+        epp_dict = {e.id_epp: e for e in elementos_epp}
+
         # Construir los datos para el PDF
         class EppDeliveryItem:
-            def __init__(self, elemento_proteccion: str):
+            def __init__(self, elemento_proteccion: str, cantidad=None, fecha_entrega=None):
                 self.elemento_proteccion = elemento_proteccion
+                self.cantidad = cantidad
+                self.fecha_entrega = fecha_entrega
 
         class PDFDataForGenerator:
             pass
@@ -181,7 +189,14 @@ def generate_epp_pdf(
         pdf_generator_data.cargo = pdf_data.cargo
         pdf_generator_data.empresa_nombre = empresa.nombre_fantasia
         pdf_generator_data.empresa_rut = f"{empresa.rut_empresa}-{empresa.DV_rut}"
-        pdf_generator_data.elementos = [EppDeliveryItem(elemento_proteccion=e.epp) for e in elementos]
+        pdf_generator_data.elementos = [
+            EppDeliveryItem(
+                elemento_proteccion=epp_dict[e.id_epp].epp,
+                cantidad=e.cantidad,
+                fecha_entrega=e.fecha_entrega
+            )
+            for e in pdf_data.elementos
+        ]
 
         # Crear instancia del generador de PDF
         pdf_generator = PDFEppGenerator()
