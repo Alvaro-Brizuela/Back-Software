@@ -1,6 +1,6 @@
 #from . import afps, bosses, locations, positions, register_company, workers
 from .auth import register, verify_email ,login, refresh
-from . import epp
+from . import epp, odi
 from . import register_company
 
 routers = [
@@ -16,5 +16,6 @@ routers = [
     refresh.router,
     login.router,
     epp.router,
+    odi.router,
     register_company.router
 ]
