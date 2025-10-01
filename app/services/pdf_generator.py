@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import List
 import os
 
-from app.schemas.pdf_epp import PDFEppRequest, EppDeliveryItem
+from app.schemas.pdf_epp import PDFEppRequest
 
 
 class PDFEppGenerator:
@@ -149,7 +149,7 @@ class PDFEppGenerator:
             Spacer(1, 12)
         ]
 
-    def _create_table(self, elementos: List[EppDeliveryItem]) -> List:
+    def _create_table(self, elementos: List) -> List:
         # Headers de la tabla
         data = [['N°', 'ELEMENTO DE PROTECCIÓN PERSONAL', 'CANTIDAD', 'FECHA DE ENTREGA']]
         

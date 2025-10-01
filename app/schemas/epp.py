@@ -2,7 +2,6 @@ from pydantic import BaseModel
 
 
 class EppCreate(BaseModel):
-    id_empresa: int
     epp: str
     descripcion: str
 
