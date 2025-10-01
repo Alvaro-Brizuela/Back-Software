@@ -2,6 +2,7 @@
 from .auth import register, verify_email ,login, refresh
 from . import epp
 from . import register_company
+from . import workers
 
 routers = [
     #afps.router,
@@ -16,5 +17,6 @@ routers = [
     refresh.router,
     login.router,
     epp.router,
-    register_company.router
+    register_company.router,
+    workers.router
 ]
