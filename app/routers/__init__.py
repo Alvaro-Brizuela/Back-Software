@@ -17,11 +17,7 @@ routers = [
     refresh.router,
     login.router,
     epp.router,
-<<<<<<< HEAD
     odi.router,
-    register_company.router
-=======
     register_company.router,
     workers.router
->>>>>>> dec1cbf01388fcecf82bf4ddcbfde2074526fd23
 ]
