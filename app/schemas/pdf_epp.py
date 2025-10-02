@@ -1,18 +1,17 @@
-from pydantic import BaseModel
-from typing import List
+from pydantic import BaseModel, Field
+from typing import List, Optional
+from datetime import date
 
 
-class EppDeliveryItem(BaseModel):
-    elemento_proteccion: str
+class EppElemento(BaseModel):
+    id_epp: int
+    cantidad: Optional[int] = Field(None, ge=1, description="Cantidad debe ser mayor o igual a 1")
+    fecha_entrega: Optional[date] = None
 
 
 class PDFEppRequest(BaseModel):
-    nombre: str
     rut: str
-    cargo: str
-    empresa_nombre: str
-    empresa_rut: str
-    elementos: List[EppDeliveryItem]
+    elementos: List[EppElemento]
 
 
 class PDFEppResponse(BaseModel):
