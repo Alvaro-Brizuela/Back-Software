@@ -10,6 +10,7 @@ from app.schemas.epp import EppCreate, EppResponse
 from app.schemas.pdf_epp import PDFEppRequest, PDFEppResponse
 from app.services.pdf_generator import PDFEppGenerator
 from app.services.dependencies import get_current_user
+from sqlalchemy import text
 
 router = APIRouter(prefix="/epp", tags=["EPP"])
 
@@ -96,40 +97,6 @@ def create_epp(
             )
 
 
-@router.delete("/delete/{id_epp}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_epp(
-    id_epp: int,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
-):
-    # Verificar que el usuario tenga rol 1 (admin) o 2 (contador)
-    if current_user["rol"] not in [1, 2]:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permisos para eliminar EPP"
-        )
-
-    # Obtener empresa_id de la sesión del usuario
-    empresa_id = current_user["empresa_id"]
-
-    # Buscar el EPP
-    epp = db.query(Epp).filter(
-        Epp.id_epp == id_epp,
-        Epp.id_empresa == empresa_id
-    ).first()
-
-    if not epp:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="EPP no encontrado o no pertenece a tu empresa"
-        )
-
-    db.delete(epp)
-    db.commit()
-
-    return None
-
-
 @router.post("/generate-pdf")
 def generate_epp_pdf(
     pdf_data: PDFEppRequest,
@@ -154,6 +121,36 @@ def generate_epp_pdf(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Empresa no encontrada"
             )
+
+        # Validar que el RUT contenga solo números
+        if not pdf_data.rut.isdigit():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="El RUT debe contener solo números"
+            )
+
+        # Buscar trabajador por RUT en la empresa
+        sql_query = text("""
+            SELECT dt.nombre, dt.apellido_paterno, dt.apellido_materno,
+                   dt.rut, dt."DV_rut", c.nombre as cargo_nombre
+            FROM datos_trabajador dt
+            JOIN trabajador t ON dt.id_trabajador = t.id_trabajador
+            LEFT JOIN cargo c ON t.id_cargo = c.id_cargo
+            WHERE t.id_empresa = :empresa_id AND dt.rut = :rut
+        """)
+
+        result = db.execute(sql_query, {"empresa_id": empresa_id, "rut": int(pdf_data.rut)}).fetchone()
+
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Trabajador no encontrado en tu empresa"
+            )
+
+        # Obtener datos del trabajador
+        trabajador_nombre = f"{result.nombre} {result.apellido_paterno} {result.apellido_materno}"
+        trabajador_rut = f"{result.rut}-{result.DV_rut}"
+        trabajador_cargo = result.cargo_nombre or ""
 
         # Obtener IDs de los elementos
         elementos_ids = [e.id_epp for e in pdf_data.elementos]
@@ -184,9 +181,9 @@ def generate_epp_pdf(
             pass
 
         pdf_generator_data = PDFDataForGenerator()
-        pdf_generator_data.nombre = pdf_data.nombre
-        pdf_generator_data.rut = pdf_data.rut
-        pdf_generator_data.cargo = pdf_data.cargo
+        pdf_generator_data.nombre = trabajador_nombre
+        pdf_generator_data.rut = trabajador_rut
+        pdf_generator_data.cargo = trabajador_cargo
         pdf_generator_data.empresa_nombre = empresa.nombre_fantasia
         pdf_generator_data.empresa_rut = f"{empresa.rut_empresa}-{empresa.DV_rut}"
         pdf_generator_data.elementos = [

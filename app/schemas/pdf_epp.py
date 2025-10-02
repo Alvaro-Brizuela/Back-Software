@@ -10,9 +10,7 @@ class EppElemento(BaseModel):
 
 
 class PDFEppRequest(BaseModel):
-    nombre: str
     rut: str
-    cargo: str
     elementos: List[EppElemento]
 
 
