@@ -56,7 +56,6 @@ def obtener_empresa(
             joinedload(Empresa.usuario),
             joinedload(Empresa.usuario).joinedload(Usuario.territorial),
             joinedload(Empresa.usuario).joinedload(Usuario.login_usuario),
-
         )
         .filter(Empresa.id_empresa == user["empresa_id"])
         .first()
