@@ -34,62 +34,59 @@ def search_trabajadores(
     # Obtener empresa_id del usuario autenticado
     empresa_id = current_user["empresa_id"]
 
-    # Usar SQL directo para evitar problemas con herencia de tablas
-    from sqlalchemy import text
+    # Buscar trabajadores con ORM
+    trabajadores_query = db.execute(
+        select(Trabajador).where(
+            Trabajador.id_empresa == empresa_id
+        )
+    ).scalars().all()
 
-    # Construir query base
-    sql_query = """
-        SELECT
-            dt.id_trabajador,
-            dt.nombre,
-            dt.apellido_paterno,
-            dt.apellido_materno,
-            dt.rut,
-            dt."DV_rut",
-            c.nombre as cargo_nombre,
-            c.id_cargo
-        FROM datos_trabajador dt
-        JOIN trabajador t ON dt.id_trabajador = t.id_trabajador
-        LEFT JOIN cargo c ON t.id_cargo = c.id_cargo
-        WHERE t.id_empresa = :empresa_id
-    """
-
-    params = {"empresa_id": empresa_id}
-
-    # Aplicar filtros opcionales
-    if nombre:
-        sql_query += " AND dt.nombre ILIKE :nombre"
-        params["nombre"] = f"%{nombre}%"
-
-    if apellido_paterno:
-        sql_query += " AND dt.apellido_paterno ILIKE :apellido_paterno"
-        params["apellido_paterno"] = f"%{apellido_paterno}%"
-
-    if apellido_materno:
-        sql_query += " AND dt.apellido_materno ILIKE :apellido_materno"
-        params["apellido_materno"] = f"%{apellido_materno}%"
-
-    if cargo:
-        sql_query += " AND c.nombre ILIKE :cargo"
-        params["cargo"] = f"%{cargo}%"
-
-    # Ejecutar query
-    resultados = db.execute(text(sql_query), params).fetchall()
-
-    # Formatear resultados
     trabajadores = []
-    for r in resultados:
-        trabajadores.append({
-            "id_trabajador": r.id_trabajador,
-            "nombre": r.nombre,
-            "apellido_paterno": r.apellido_paterno,
-            "apellido_materno": r.apellido_materno,
-            "rut": f"{r.rut}-{r.DV_rut}",
-            "cargo": {
-                "id_cargo": r.id_cargo,
-                "nombre": r.cargo_nombre
-            } if r.cargo_nombre else None
-        })
+    for t in trabajadores_query:
+        datos = db.query(DatosTrabajador).filter(
+            DatosTrabajador.id_trabajador == t.id_trabajador
+        ).first()
+
+        if datos:
+            # Aplicar filtros opcionales
+            if nombre and nombre.lower() not in datos.nombre.lower():
+                continue
+            if apellido_paterno and apellido_paterno.lower() not in datos.apellido_paterno.lower():
+                continue
+            if apellido_materno and apellido_materno.lower() not in datos.apellido_materno.lower():
+                continue
+
+            cargo_obj = db.query(Cargo).filter(Cargo.id_cargo == t.id_cargo).first() if t.id_cargo else None
+
+            # Filtro de cargo
+            if cargo and (not cargo_obj or cargo.lower() not in cargo_obj.nombre.lower()):
+                continue
+
+            afp = db.query(Afp).filter(Afp.id_afp == t.id_afp).first() if t.id_afp else None
+            salud = db.query(Salud).filter(Salud.id_salud == t.id_salud).first() if t.id_salud else None
+
+            trabajadores.append({
+                "id_trabajador": datos.id_trabajador,
+                "nombre": datos.nombre,
+                "apellido_paterno": datos.apellido_paterno,
+                "apellido_materno": datos.apellido_materno,
+                "rut": f"{datos.rut}-{datos.DV_rut}",
+                "fecha_nacimiento": datos.fecha_nacimiento,
+                "nacionalidad": datos.nacionalidad,
+                "direccion_real": datos.direccion_real,
+                "cargo": {
+                    "id_cargo": cargo_obj.id_cargo,
+                    "nombre": cargo_obj.nombre
+                } if cargo_obj else None,
+                "afp": {
+                    "id_afp": afp.id_afp,
+                    "nombre": afp.nombre
+                } if afp else None,
+                "salud": {
+                    "id_salud": salud.id_salud,
+                    "nombre": salud.nombre
+                } if salud else None
+            })
 
     return {
         "total": len(trabajadores),
@@ -123,45 +120,48 @@ def search_trabajadores_by_rut(
             detail="El RUT debe contener solo numeros"
         )
 
-    # Usar SQL directo
-    from sqlalchemy import text
+    # Buscar trabajador con ORM
+    trabajador = db.execute(
+        select(Trabajador).where(
+            Trabajador.id_empresa == empresa_id
+        )
+    ).scalars().all()
 
-    sql_query = """
-        SELECT
-            dt.id_trabajador,
-            dt.nombre,
-            dt.apellido_paterno,
-            dt.apellido_materno,
-            dt.rut,
-            dt."DV_rut",
-            c.nombre as cargo_nombre,
-            c.id_cargo
-        FROM datos_trabajador dt
-        JOIN trabajador t ON dt.id_trabajador = t.id_trabajador
-        LEFT JOIN cargo c ON t.id_cargo = c.id_cargo
-        WHERE t.id_empresa = :empresa_id
-        AND dt.rut = :rut
-    """
-
-    params = {"empresa_id": empresa_id, "rut": int(rut)}
-
-    # Ejecutar query
-    resultados = db.execute(text(sql_query), params).fetchall()
-
-    # Formatear resultados
+    # Filtrar por RUT en datos_trabajador
     trabajadores = []
-    for r in resultados:
-        trabajadores.append({
-            "id_trabajador": r.id_trabajador,
-            "nombre": r.nombre,
-            "apellido_paterno": r.apellido_paterno,
-            "apellido_materno": r.apellido_materno,
-            "rut": f"{r.rut}-{r.DV_rut}",
-            "cargo": {
-                "id_cargo": r.id_cargo,
-                "nombre": r.cargo_nombre
-            } if r.cargo_nombre else None
-        })
+    for t in trabajador:
+        datos = db.query(DatosTrabajador).filter(
+            DatosTrabajador.id_trabajador == t.id_trabajador,
+            DatosTrabajador.rut == int(rut)
+        ).first()
+
+        if datos:
+            cargo = db.query(Cargo).filter(Cargo.id_cargo == t.id_cargo).first() if t.id_cargo else None
+            afp = db.query(Afp).filter(Afp.id_afp == t.id_afp).first() if t.id_afp else None
+            salud = db.query(Salud).filter(Salud.id_salud == t.id_salud).first() if t.id_salud else None
+
+            trabajadores.append({
+                "id_trabajador": datos.id_trabajador,
+                "nombre": datos.nombre,
+                "apellido_paterno": datos.apellido_paterno,
+                "apellido_materno": datos.apellido_materno,
+                "rut": f"{datos.rut}-{datos.DV_rut}",
+                "fecha_nacimiento": datos.fecha_nacimiento,
+                "nacionalidad": datos.nacionalidad,
+                "direccion_real": datos.direccion_real,
+                "cargo": {
+                    "id_cargo": cargo.id_cargo,
+                    "nombre": cargo.nombre
+                } if cargo else None,
+                "afp": {
+                    "id_afp": afp.id_afp,
+                    "nombre": afp.nombre
+                } if afp else None,
+                "salud": {
+                    "id_salud": salud.id_salud,
+                    "nombre": salud.nombre
+                } if salud else None
+            })
 
     return {
         "total": len(trabajadores),

@@ -15,6 +15,7 @@ import os
 from app.schemas.pdf_epp import PDFEppRequest
 from app.schemas.pdf_odi import PDFOdiRequest
 from app.schemas.pdf_contrato import PDFContratoRequest
+from app.schemas.pdf_termino_contrato import PDFTerminoContratoRequest
 
 
 class PDFEppGenerator:
@@ -669,3 +670,192 @@ class PDFContratoGenerator:
                 resultado += romano
                 numero -= valor
         return f"DÉCIMO {resultado}" if resultado else "DÉCIMO"
+
+
+class PDFTerminoContratoGenerator:
+    def __init__(self):
+        self.styles = getSampleStyleSheet()
+        self.create_custom_styles()
+
+    def create_custom_styles(self):
+        # Estilo para el título
+        self.title_style = ParagraphStyle(
+            'TitleStyle',
+            parent=self.styles['Normal'],
+            fontSize=14,
+            alignment=TA_CENTER,
+            spaceAfter=12,
+            fontName='Helvetica-Bold'
+        )
+
+        # Estilo para el nombre de empresa
+        self.empresa_style = ParagraphStyle(
+            'EmpresaStyle',
+            parent=self.styles['Normal'],
+            fontSize=12,
+            alignment=TA_CENTER,
+            spaceAfter=18,
+            fontName='Helvetica-Bold'
+        )
+
+        # Estilo para fecha y lugar
+        self.fecha_style = ParagraphStyle(
+            'FechaStyle',
+            parent=self.styles['Normal'],
+            fontSize=10,
+            alignment=TA_CENTER,
+            spaceAfter=12
+        )
+
+        # Estilo normal
+        self.normal_style = ParagraphStyle(
+            'NormalStyle',
+            parent=self.styles['Normal'],
+            fontSize=10,
+            alignment=TA_LEFT,
+            spaceAfter=6
+        )
+
+        # Estilo justificado
+        self.justify_style = ParagraphStyle(
+            'JustifyStyle',
+            parent=self.styles['Normal'],
+            fontSize=10,
+            alignment=TA_JUSTIFY,
+            spaceAfter=6
+        )
+
+    def _format_date(self, date_obj):
+        """Formatea la fecha en español"""
+        days = ['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO', 'DOMINGO']
+        months = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
+                  'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE']
+
+        day_name = days[date_obj.weekday()]
+        month_name = months[date_obj.month - 1]
+
+        return f"{day_name} {date_obj.day} de {month_name} del {date_obj.year}"
+
+    def generate_pdf(self, data):
+        """Genera el PDF de carta de término de contrato"""
+        # Crear directorio para PDFs si no existe
+        pdf_dir = "generated_pdfs"
+        os.makedirs(pdf_dir, exist_ok=True)
+
+        # Nombre del archivo PDF
+        filename = f"termino_contrato_{data.rut_trabajador.replace('-', '')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        filepath = os.path.join(pdf_dir, filename)
+
+        # Crear el documento PDF
+        doc = SimpleDocTemplate(
+            filepath,
+            pagesize=letter,
+            rightMargin=72,
+            leftMargin=72,
+            topMargin=72,
+            bottomMargin=72
+        )
+
+        # Contenido del documento
+        story = []
+
+        # Título
+        story.append(Paragraph("CARTA DE AVISO", self.title_style))
+        story.append(Spacer(1, 12))
+
+        # Nombre de la empresa
+        story.append(Paragraph(data.empresa_nombre.upper(), self.empresa_style))
+        story.append(Spacer(1, 12))
+
+        # Fecha y lugar
+        fecha_formateada = self._format_date(data.fecha_carta)
+        story.append(Paragraph(f"En {data.ciudad.upper()} a {fecha_formateada}", self.fecha_style))
+        story.append(Spacer(1, 12))
+
+        # Datos del trabajador
+        story.append(Paragraph(f"Señor\t{data.nombre_trabajador.upper()}", self.normal_style))
+        story.append(Paragraph(f"Rut\t{data.rut_trabajador}", self.normal_style))
+        story.append(Paragraph(f"Dirección\t{data.direccion_trabajador.upper()}", self.normal_style))
+        story.append(Paragraph(f"Comuna\t{data.comuna_trabajador.upper()}", self.normal_style))
+        story.append(Spacer(1, 12))
+
+        # PRESENTE
+        story.append(Paragraph("<b>PRESENTE</b>", self.normal_style))
+        story.append(Spacer(1, 6))
+
+        # Saludo
+        story.append(Paragraph("De nuestra consideración:", self.normal_style))
+        story.append(Spacer(1, 6))
+
+        # Cuerpo principal
+        fecha_termino_formateada = self._format_date(data.fecha_termino)
+        texto_principal = f"Informamos a Usted que la Administración de la Empresa ha decidido poner termino a su contrato de trabajo a contar del día {fecha_termino_formateada}, en virtud a lo establecido en el {data.articulo_causal} del Código del Trabajo, esto es, {data.descripcion_causal.upper()}, causal señalada en el Código del Trabajo, artículo 159, inciso 5to."
+        story.append(Paragraph(texto_principal, self.justify_style))
+        story.append(Spacer(1, 12))
+
+        # Fundamentación
+        story.append(Paragraph(data.fundamentacion, self.justify_style))
+        story.append(Spacer(1, 12))
+
+        # Imposiciones
+        texto_imposiciones = "Asi Mismo informamos a usted que sus imposiciones se encuentran canceladas oportuna y debidamente en las Instituciones Previsionales correspondientes. Además,  adjuntamos a la siguiente carta,  Certificado de la empresa Previred que da cuenta que las cotizaciones previsionales, de los meses trabajados, se encuentran pagadas."
+        story.append(Paragraph(texto_imposiciones, self.justify_style))
+        story.append(Spacer(1, 12))
+
+        # Información de pago
+        texto_pago = f"Su finiquito sera cancelado en diez dias habiles a partir de la fecha del finiquito en {data.lugar_pago_finiquito},  Llamar al {data.telefono_notaria} para confirmar Pago."
+        story.append(Paragraph(texto_pago, self.justify_style))
+        story.append(Spacer(1, 12))
+
+        # Despedida
+        story.append(Paragraph("Atentamente,", self.normal_style))
+        story.append(Spacer(1, 36))
+
+        # Firmas
+        from reportlab.platypus.flowables import Flowable
+
+        class SignatureBlock(Flowable):
+            def __init__(self, empresa_nombre, empresa_rut, trabajador_nombre, trabajador_rut):
+                Flowable.__init__(self)
+                self.empresa_nombre = empresa_nombre
+                self.empresa_rut = empresa_rut
+                self.trabajador_nombre = trabajador_nombre
+                self.trabajador_rut = trabajador_rut
+                self.width = 450
+                self.height = 100
+
+            def draw(self):
+                canvas = self.canv
+
+                # Líneas para firmas
+                canvas.line(28, 60, 208, 60)  # Línea empresa
+                canvas.line(248, 60, 428, 60)  # Línea trabajador
+
+                # Textos de firma - empresa
+                canvas.setFont("Helvetica-Bold", 9)
+                canvas.drawCentredString(118, 45, self.empresa_nombre.upper())
+                canvas.setFont("Helvetica", 9)
+                canvas.drawCentredString(118, 33, self.empresa_rut)
+                canvas.drawCentredString(118, 21, "EMPLEADOR")
+
+                # Textos de firma - trabajador
+                canvas.setFont("Helvetica-Bold", 9)
+                canvas.drawCentredString(338, 45, self.trabajador_nombre.upper())
+                canvas.setFont("Helvetica", 9)
+                canvas.drawCentredString(338, 33, self.trabajador_rut)
+                canvas.drawCentredString(338, 21, "TRABAJADOR")
+                canvas.setFont("Helvetica", 8)
+                canvas.drawCentredString(338, 9, "Recibí Copia de la presente carta")
+
+        signature_block = SignatureBlock(
+            data.empresa_nombre,
+            data.empresa_rut,
+            data.nombre_trabajador,
+            data.rut_trabajador
+        )
+        story.append(signature_block)
+
+        # Construir el PDF
+        doc.build(story)
+
+        return filepath
