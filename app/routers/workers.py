@@ -168,15 +168,12 @@ def search_trabajadores_by_rut(
         "trabajadores": trabajadores
     }
 
-@router.post("/", response_model=TrabajadorResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/create_worker", response_model=TrabajadorResponse, status_code=status.HTTP_201_CREATED)
 def create_trabajador(
     trabajador: TrabajadorCreate,
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)
 ):
-    """
-    Crea un trabajador usando nombres en lugar de IDs.
-    """
     if current_user["rol"] not in [1, 2]:
         raise HTTPException(status_code=403, detail="No tienes permisos")
 
@@ -187,10 +184,12 @@ def create_trabajador(
     # ------------------------
     id_cargo = None
     if trabajador.cargo:
-        cargo = db.execute(select(Cargo).where(
-            Cargo.id_empresa == empresa_id,
-            Cargo.nombre.ilike(trabajador.cargo)
-        )).scalar_one_or_none()
+        cargo = db.execute(
+            select(Cargo).where(
+                Cargo.id_empresa == empresa_id,
+                Cargo.nombre.ilike(trabajador.cargo)
+            )
+        ).scalar_one_or_none()
         if not cargo:
             raise HTTPException(404, f"Cargo '{trabajador.cargo}' no encontrado")
         id_cargo = cargo.id_cargo
@@ -207,15 +206,13 @@ def create_trabajador(
         id_salud = salud.id_salud
 
     territorial = db.execute(
-    select(Territorial).where(
-        Territorial.region.ilike(trabajador.region),
-        Territorial.comuna.ilike(trabajador.comuna)
-    )
+        select(Territorial).where(
+            Territorial.region.ilike(trabajador.region),
+            Territorial.comuna.ilike(trabajador.comuna)
+        )
     ).scalar_one_or_none()
-
     if not territorial:
         raise HTTPException(404, f"Territorial '{trabajador.region} - {trabajador.comuna}' no encontrado")
-
 
     # ------------------------
     # Insertar en tablas
@@ -228,20 +225,28 @@ def create_trabajador(
         id_salud=id_salud,
     )
     db.add(nuevo_trabajador)
-    db.flush()
+    db.flush()  # ahora nuevo_trabajador.id_trabajador ya existe
+
+    # separar rut y DV (ej: "21402714-3" -> rut_num="21402714", dv="3")
+    rut_limpio = trabajador.rut.replace(".", "").upper()
+    if "-" in rut_limpio:
+        rut_num, dv = rut_limpio.split("-")
+    else:
+        rut_num, dv = rut_limpio[:-1], rut_limpio[-1]
 
     datos = DatosTrabajador(
-        id_trabajador=nuevo_trabajador.id_trabajador,
+        id_trabajador=nuevo_trabajador.id_trabajador,  # FK obligatoria
         nombre=trabajador.nombre,
         apellido_paterno=trabajador.apellido_paterno,
         apellido_materno=trabajador.apellido_materno,
         fecha_nacimiento=trabajador.fecha_nacimiento,
-        rut=trabajador.rut,
-        DV_rut=trabajador.DV_rut,
+        rut=rut_num,
+        DV_rut=dv,
         nacionalidad=trabajador.nacionalidad,
         direccion_real=trabajador.direccion_real,
     )
     db.add(datos)
+
     db.commit()
     db.refresh(nuevo_trabajador)
 

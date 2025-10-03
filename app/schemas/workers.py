@@ -50,8 +50,7 @@ class DatosTrabajadorBase(BaseModel):
     apellido_paterno: constr(min_length=2, max_length=40)
     apellido_materno: constr(min_length=2, max_length=40)
     fecha_nacimiento: date
-    rut: int = Field(..., description="Número de RUT sin dígito verificador")
-    DV_rut: constr(min_length=1, max_length=1) = Field(..., description="Dígito verificador")
+    rut: str = Field(..., description="Número de RUT sin dígito verificador")
     nacionalidad: constr(min_length=2, max_length=50)
     direccion_real: str
 
@@ -81,8 +80,7 @@ class TrabajadorCreate(BaseModel):
     apellido_paterno: constr(min_length=2, max_length=40)
     apellido_materno: constr(min_length=2, max_length=40)
     fecha_nacimiento: date
-    rut: int = Field(..., description="Número de RUT sin dígito verificador")
-    DV_rut: constr(min_length=1, max_length=1)
+    rut: str = Field(..., description="Número de RUT sin dígito verificador")
     nacionalidad: constr(min_length=2, max_length=50)
     direccion_real: str
 
@@ -104,7 +102,6 @@ class TrabajadorUpdate(BaseModel):
     apellido_materno: Optional[str] = None
     fecha_nacimiento: Optional[date] = None
     rut: Optional[int] = None
-    DV_rut: Optional[str] = None
     nacionalidad: Optional[str] = None
     direccion_real: Optional[str] = None
     id_afp: Optional[int] = None
@@ -123,7 +120,6 @@ class DatosTrabajadorResponse(DatosTrabajadorBase):
 
 
 class TrabajadorResponse(TrabajadorBase):
-    id_trabajador: int
     datos: DatosTrabajadorResponse
     cargo: Optional[CargoOut] = None
     afp: Optional[AfpOut] = None
