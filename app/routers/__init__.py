@@ -4,6 +4,7 @@ from . import epp, odi
 from . import register_company
 from . import workers
 from . import nacionalidad
+from . import contrato
 
 routers = [
     #afps.router,
@@ -21,5 +22,6 @@ routers = [
     odi.router,
     register_company.router,
     workers.router,
-    nacionalidad.router
+    nacionalidad.router,
+    contrato.router
 ]
