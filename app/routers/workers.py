@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 from typing import Optional, List
 
 from app.database import get_db
-from app.models.generated import DatosTrabajador, Trabajador, Cargo
+from app.models.generated import DatosTrabajador, Trabajador, Cargo, Territorial, Salud,Afp
 from app.services.dependencies import get_current_user
+from app.schemas.workers import TrabajadorCreate, TrabajadorResponse
 
 router = APIRouter(prefix="/trabajadores", tags=["Trabajadores"])
 
@@ -165,3 +167,82 @@ def search_trabajadores_by_rut(
         "total": len(trabajadores),
         "trabajadores": trabajadores
     }
+
+@router.post("/", response_model=TrabajadorResponse, status_code=status.HTTP_201_CREATED)
+def create_trabajador(
+    trabajador: TrabajadorCreate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Crea un trabajador usando nombres en lugar de IDs.
+    """
+    if current_user["rol"] not in [1, 2]:
+        raise HTTPException(status_code=403, detail="No tienes permisos")
+
+    empresa_id = current_user["empresa_id"]
+
+    # ------------------------
+    # Resolver IDs desde nombres
+    # ------------------------
+    id_cargo = None
+    if trabajador.cargo:
+        cargo = db.execute(select(Cargo).where(
+            Cargo.id_empresa == empresa_id,
+            Cargo.nombre.ilike(trabajador.cargo)
+        )).scalar_one_or_none()
+        if not cargo:
+            raise HTTPException(404, f"Cargo '{trabajador.cargo}' no encontrado")
+        id_cargo = cargo.id_cargo
+
+    afp = db.execute(select(Afp).where(Afp.nombre.ilike(trabajador.afp))).scalar_one_or_none()
+    if not afp:
+        raise HTTPException(404, f"AFP '{trabajador.afp}' no encontrada")
+
+    id_salud = None
+    if trabajador.salud:
+        salud = db.execute(select(Salud).where(Salud.nombre.ilike(trabajador.salud))).scalar_one_or_none()
+        if not salud:
+            raise HTTPException(404, f"Salud '{trabajador.salud}' no encontrada")
+        id_salud = salud.id_salud
+
+    territorial = db.execute(
+    select(Territorial).where(
+        Territorial.region.ilike(trabajador.region),
+        Territorial.comuna.ilike(trabajador.comuna)
+    )
+    ).scalar_one_or_none()
+
+    if not territorial:
+        raise HTTPException(404, f"Territorial '{trabajador.region} - {trabajador.comuna}' no encontrado")
+
+
+    # ------------------------
+    # Insertar en tablas
+    # ------------------------
+    nuevo_trabajador = Trabajador(
+        id_empresa=empresa_id,
+        id_afp=afp.id_afp,
+        id_territorial=territorial.id_territorial,
+        id_cargo=id_cargo,
+        id_salud=id_salud,
+    )
+    db.add(nuevo_trabajador)
+    db.flush()
+
+    datos = DatosTrabajador(
+        id_trabajador=nuevo_trabajador.id_trabajador,
+        nombre=trabajador.nombre,
+        apellido_paterno=trabajador.apellido_paterno,
+        apellido_materno=trabajador.apellido_materno,
+        fecha_nacimiento=trabajador.fecha_nacimiento,
+        rut=trabajador.rut,
+        DV_rut=trabajador.DV_rut,
+        nacionalidad=trabajador.nacionalidad,
+        direccion_real=trabajador.direccion_real,
+    )
+    db.add(datos)
+    db.commit()
+    db.refresh(nuevo_trabajador)
+
+    return nuevo_trabajador
