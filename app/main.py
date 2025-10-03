@@ -19,6 +19,7 @@ origins = [
     "http://127.0.0.1:5500",  
     "https://contapluss.netlify.app", # Producción real en Netlify
     "https://oxido.cl", #Produccion temporal
+    "https://gleeful-mochi-e44832a.netlify.app",  # dominio netlify
 ]
 
 app.add_middleware(
