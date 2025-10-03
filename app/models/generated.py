@@ -512,3 +512,16 @@ class Sesiones(Base):
     ip = mapped_column(Text)
 
     login_usuario: Mapped['LoginUsuario'] = relationship('LoginUsuario', back_populates='sesiones')
+
+
+class Clausulas(Base):
+    __tablename__ = 'clausulas'
+    __table_args__ = (
+        PrimaryKeyConstraint('id_clausula', name='clausulas_pkey'),
+        UniqueConstraint('id_empresa', 'titulo', name='unique_empresa_titulo')
+    )
+
+    id_clausula = mapped_column(Integer, Identity(always=True, start=1, increment=1, minvalue=1, maxvalue=2147483647, cycle=False, cache=1))
+    id_empresa = mapped_column(Integer, nullable=False)
+    titulo = mapped_column(String(120), nullable=False)
+    clausula = mapped_column(Text)

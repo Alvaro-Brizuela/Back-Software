@@ -5,6 +5,7 @@ from . import register_company
 from . import workers
 from . import nacionalidad
 from . import contrato
+from . import clausulas
 
 routers = [
     #afps.router,
@@ -23,5 +24,6 @@ routers = [
     register_company.router,
     workers.router,
     nacionalidad.router,
-    contrato.router
+    contrato.router,
+    clausulas.router
 ]
