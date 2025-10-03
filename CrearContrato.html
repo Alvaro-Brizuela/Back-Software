@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Contrato de Trabajo</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link rel="icon" type="image/png" href="../../plantilla/img/logo-contaplus-favicon.png">
+    <link rel="stylesheet" href="../../plantilla/plantilla_sidebar.css">
+    <link rel="stylesheet" href="CrearContratos.css">
+</head>
+<body>
+
+    <header class="header">
+        <button id="toggleSidebar" class="btn btn-light btn-toggle">
+            <i class="bi bi-list"></i>
+        </button>
+        <div class="header-brand">
+            <img src="../../plantilla/img/logo-crop.png" alt="Logo Contaplus" class="header-logo">
+            <span class="header-title">CONTAPLUS</span>
+        </div>
+        <div class="header-right">
+            <div class="profile-icon" id="profileIcon"></div>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <span class="user-name" id="userName"></span>
+                <button id="logoutBtn">Cerrar sesión</button>
+            </div>
+        </div>
+    </header>
+
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-title">
+                <img src="../../plantilla/img/logo-crop.png" alt="Logo Contaplus" class="logo-sidebar">
+                <h5>CONTAPLUS</h5>
+            </div>
+            <button id="closeSidebar" class="custom-close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="accordion" id="sidebarAccordion">
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed ps-3" data-bs-toggle="collapse" data-bs-target="#collapseRRHH">
+                        <i class="bi bi-people-fill icon"></i>Recursos Humanos
+                    </button>
+                </h2>
+                <div id="collapseRRHH" class="accordion-collapse collapse show" data-bs-parent="#sidebarAccordion">
+                    <div class="accordion-body ps-0">
+                        <div class="accordion" id="subAccordionRRHH">
+                            <div class="accordion-item border-0">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed ps-3" data-bs-toggle="collapse" data-bs-target="#collapsePersonal">
+                                        Personal
+                                    </button>
+                                </h2>
+                                <div id="collapsePersonal" class="accordion-collapse collapse">
+                                    <div class="accordion-body ps-4">
+                                        <a href="/views/Trabajadores.html" class="d-block">Trabajadores</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item border-0">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed ps-3" data-bs-toggle="collapse" data-bs-target="#collapseContratos">
+                                        Contratos
+                                    </button>
+                                </h2>
+                                <div id="collapseContratos" class="accordion-collapse collapse show">
+                                    <div class="accordion-body ps-4">
+                                        <a href="/views/Contratos/ListarContrato.html" class="d-block">Listar Contratos</a>
+                                        <a href="/views/Contratos/CrearContrato.html" class="d-block active">Crear Contrato</a>
+                                        <a href="/views/Clausulas/CrearClausulas.html" class="d-block">Crear Cláusula</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item border-0">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed ps-3" data-bs-toggle="collapse" data-bs-target="#collapsePrevencion">
+                                        Prevención
+                                    </button>
+                                </h2>
+                                <div id="collapsePrevencion" class="accordion-collapse collapse">
+                                    <div class="accordion-body ps-4">
+                                        <a href="#" class="d-block">REC R.I.O.H.S</a>
+                                        <a href="#" class="d-block">REC EPP</a>
+                                        <a href="#" class="d-block">REC DIE EPP</a>
+                                        <a href="#" class="d-block">REC ODI</a>
+                                        <a href="#" class="d-block">REC DIE ODI</a>
+                                        <a href="#" class="d-block">REC CAP CARGO</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item border-0">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed ps-3" data-bs-toggle="collapse" data-bs-target="#collapsePermiso">
+                                        Permisos
+                                    </button>
+                                </h2>
+                                <div id="collapsePermiso" class="accordion-collapse collapse">
+                                    <div class="accordion-body ps-4">
+                                        <a href="/views/Permisos/PermisoConGoce.html" class="d-block">Permiso Con Goce de Sueldo</a>
+                                        <a href="/views/Permisos/PermisoSinGoce.html" class="d-block">Permiso Sin Goce de Sueldo</a>
+                                        <a href="/views/Permisos/PermisoFeriado.html" class="d-block">Permiso Feriado</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content">
+        <div class="card p-4">
+            <h1 class="card-title h3 mb-4">Creación de Contrato de Trabajo</h1>
+            
+            <form id="contratoForm">
+                <div class="mb-4">
+                    <h2 class="h5">Datos del Contrato</h2>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="ciudadFirma" class="form-label">Ciudad de Firma:</label>
+                            <input type="text" class="form-control" id="ciudadFirma" placeholder="Ej: SANTIAGO" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fechaContrato" class="form-label">Fecha del Contrato:</label>
+                            <input type="date" class="form-control" id="fechaContrato" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nombreEmpresa" class="form-label">Nombre de la Empresa:</label>
+                            <input type="text" class="form-control" id="nombreEmpresa" placeholder="Nombre de la Empresa" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rutEmpresa" class="form-label">RUT de la Empresa:</label>
+                            <input type="text" class="form-control" id="rutEmpresa" placeholder="Ej: 77.795.895-K" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="representanteLegal" class="form-label">Representante Legal:</label>
+                            <input type="text" class="form-control" id="representanteLegal" placeholder="Nombre del representante" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rutRepresentante" class="form-label">RUT Representante Legal:</label>
+                            <input type="text" class="form-control" id="rutRepresentante" placeholder="RUT del representante" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="domicilioRepresentante" class="form-label">Domicilio Representante Legal:</label>
+                            <input type="text" class="form-control" id="domicilioRepresentante" placeholder="Domicilio del representante" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nombreTrabajador" class="form-label">Nombre del Trabajador:</label>
+                            <input type="text" class="form-control" id="nombreTrabajador" placeholder="Nombre completo del trabajador" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nacionalidadTrabajador" class="form-label">Nacionalidad:</label>
+                            <input type="text" class="form-control" id="nacionalidadTrabajador" placeholder="Nacionalidad" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rutTrabajador" class="form-label">RUT del Trabajador:</label>
+                            <input type="text" class="form-control" id="rutTrabajador" placeholder="Ej: 12.370.850-4" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="estadoCivilTrabajador" class="form-label">Estado Civil:</label>
+                            <input type="text" class="form-control" id="estadoCivilTrabajador" placeholder="Estado civil" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fechaNacimientoTrabajador" class="form-label">Fecha de Nacimiento:</label>
+                            <input type="date" class="form-control" id="fechaNacimientoTrabajador" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="domicilioTrabajador" class="form-label">Domicilio del Trabajador:</label>
+                            <input type="text" class="form-control" id="domicilioTrabajador" placeholder="Domicilio" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="cargoTrabajador" class="form-label">Cargo:</label>
+                            <input type="text" class="form-control" id="cargoTrabajador" placeholder="Ej: MAESTRO SANDWICHERO" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lugarTrabajo" class="form-label">Lugar de Trabajo:</label>
+                            <input type="text" class="form-control" id="lugarTrabajo" placeholder="Dirección del lugar de trabajo" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="sueldo" class="form-label">Sueldo Base:</label>
+                            <input type="number" class="form-control" id="sueldo" placeholder="Sueldo en números" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="jornada" class="form-label">Jornada:</label>
+                            <input type="text" class="form-control" id="jornada" placeholder="Ej: 45 horas semanales" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="descripcionJornada" class="form-label">Descripción de Jornada:</label>
+                            <input type="text" class="form-control" id="descripcionJornada" placeholder="Ej: LUNES A VIERNES de 08:00 a 18:00 horas." required>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h5 mb-0">Cláusulas del Contrato</h2>
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#agregarClausulaModal">
+                            <i class="bi bi-plus-circle-fill"></i> Agregar Cláusula
+                        </button>
+                    </div>
+                    <div id="clausulasContainer" class="p-3 border rounded">
+                        <div class="alert alert-info mb-0" role="alert" id="noClausulasAlert">
+                            No se han agregado cláusulas. Utilice el botón "Agregar Cláusula".
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" id="generarContratoBtn" class="btn btn-primary">
+                        <i class="bi bi-file-earmark-text-fill"></i> Generar Contrato
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="agregarClausulaModal" tabindex="-1" aria-labelledby="agregarClausulaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agregarClausulaModalLabel">Seleccionar Cláusula</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="selectClausula" class="form-label">Cláusula Disponible:</label>
+                        <select class="form-select" id="selectClausula">
+                            <option value="">Seleccione una cláusula...</option>
+                            <option value="Cláusula de Confidencialidad">Cláusula de Confidencialidad</option>
+                            <option value="Cláusula de No Competencia">Cláusula de No Competencia</option>
+                            <option value="Cláusula de Propiedad Intelectual">Cláusula de Propiedad Intelectual</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btnAgregarClausulaModal">Agregar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../plantilla/plantilla_sidebar.js"></script>
+    <script src="CrearContratos.js"></script>
+</body>
+</html>
