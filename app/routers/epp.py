@@ -5,12 +5,11 @@ from sqlalchemy.exc import IntegrityError
 import os
 
 from app.database import get_db
-from app.models.generated import Epp, Empresa
+from app.models.generated import Epp, Empresa, Trabajador, DatosTrabajador, Cargo
 from app.schemas.epp import EppCreate, EppResponse
 from app.schemas.pdf_epp import PDFEppRequest, PDFEppResponse
 from app.services.pdf_generator import PDFEppGenerator
 from app.services.dependencies import get_current_user
-from sqlalchemy import text
 
 router = APIRouter(prefix="/epp", tags=["EPP"])
 
@@ -129,28 +128,37 @@ def generate_epp_pdf(
                 detail="El RUT debe contener solo números"
             )
 
-        # Buscar trabajador por RUT en la empresa
-        sql_query = text("""
-            SELECT dt.nombre, dt.apellido_paterno, dt.apellido_materno,
-                   dt.rut, dt."DV_rut", c.nombre as cargo_nombre
-            FROM datos_trabajador dt
-            JOIN trabajador t ON dt.id_trabajador = t.id_trabajador
-            LEFT JOIN cargo c ON t.id_cargo = c.id_cargo
-            WHERE t.id_empresa = :empresa_id AND dt.rut = :rut
-        """)
+        # Buscar trabajador por RUT en la empresa con ORM
+        trabajadores = db.query(Trabajador).filter(
+            Trabajador.id_empresa == empresa_id
+        ).all()
 
-        result = db.execute(sql_query, {"empresa_id": empresa_id, "rut": int(pdf_data.rut)}).fetchone()
+        datos_trabajador = None
+        trabajador_obj = None
 
-        if not result:
+        for t in trabajadores:
+            datos = db.query(DatosTrabajador).filter(
+                DatosTrabajador.id_trabajador == t.id_trabajador,
+                DatosTrabajador.rut == int(pdf_data.rut)
+            ).first()
+            if datos:
+                trabajador_obj = t
+                datos_trabajador = datos
+                break
+
+        if not datos_trabajador:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Trabajador no encontrado en tu empresa"
             )
 
+        # Obtener cargo si existe
+        cargo = db.query(Cargo).filter(Cargo.id_cargo == trabajador_obj.id_cargo).first() if trabajador_obj.id_cargo else None
+
         # Obtener datos del trabajador
-        trabajador_nombre = f"{result.nombre} {result.apellido_paterno} {result.apellido_materno}"
-        trabajador_rut = f"{result.rut}-{result.DV_rut}"
-        trabajador_cargo = result.cargo_nombre or ""
+        trabajador_nombre = f"{datos_trabajador.nombre} {datos_trabajador.apellido_paterno} {datos_trabajador.apellido_materno}"
+        trabajador_rut = f"{datos_trabajador.rut}-{datos_trabajador.DV_rut}"
+        trabajador_cargo = cargo.nombre if cargo else ""
 
         # Obtener IDs de los elementos
         elementos_ids = [e.id_epp for e in pdf_data.elementos]
